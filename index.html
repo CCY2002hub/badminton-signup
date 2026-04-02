@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>羽球臨打報名系統</title>
+<title>羽球揪團佈告欄</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -54,6 +54,10 @@ input { width: 100%; padding: 9px 12px; border: 1px solid var(--border2); border
 .avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; background: #CECBF6; color: #3C3489; overflow: hidden; }
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
+/* 首頁佈告欄卡片特效 */
+.game-card { cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border-left: 5px solid var(--green-mid); margin-bottom: 0; }
+.game-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
 /* 頁籤控制 */
 .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; overflow-x: auto; scrollbar-width: none; }
 .tab { padding: 10px 16px; font-size: 13px; font-weight: 500; border: none; background: none; cursor: pointer; color: var(--text3); border-bottom: 2px solid transparent; white-space: nowrap; transition: all .2s; }
@@ -71,7 +75,7 @@ input { width: 100%; padding: 9px 12px; border: 1px solid var(--border2); border
 
 <header class="site-header">
   <div class="header-inner">
-    <a href="?" class="logo">🏸 羽球系統首頁</a>
+    <a href="?" class="logo">🏸 羽球揪團佈告欄</a>
     <div style="display:flex; align-items:center; gap:10px;">
       <span id="user-display-name" style="font-size:12px; font-weight:500; color:var(--blue);"></span>
       <span class="admin-badge" id="admin-badge">團主</span>
@@ -95,14 +99,19 @@ input { width: 100%; padding: 9px 12px; border: 1px solid var(--border2); border
 </div>
 
 <div id="lobby-screen" class="container">
-  <div class="card" style="text-align:center; padding:3rem 1rem;">
-    <h2>歡迎來到大廳</h2>
-    <p style="color:var(--text2); margin: 10px 0 20px;">你可以參加別人的球局（請透過專屬連結進入），<br>或是自己創建一個全新的球局！</p>
-    <button class="submit-btn" style="max-width:300px;" onclick="createNewGroup()">➕ 創建我的羽球報名表</button>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem;">
+    <h2>📣 尋找球局</h2>
+    <button class="action-btn" style="background:var(--text); color:#fff; padding:8px 16px;" onclick="createNewGroup()">➕ 創建我的球局</button>
+  </div>
+  <div id="games-list" style="display: grid; gap: 15px;">
+    <div style="text-align:center; padding: 2rem; color:var(--text3);">讀取球局中...</div>
   </div>
 </div>
 
 <div id="room-screen" class="container">
+  <div style="margin-bottom: 15px;">
+    <button class="action-btn" onclick="window.location.href='?'">🔙 回到佈告欄</button>
+  </div>
   <div class="tabs">
     <button class="tab active" onclick="switchTab('game')">球局資訊</button>
     <button class="tab" onclick="switchTab('signup')">報名臨打</button>
@@ -154,13 +163,6 @@ input { width: 100%; padding: 9px 12px; border: 1px solid var(--border2); border
   </div>
 
   <div id="sec-admin" class="section admin-only">
-    <div class="card" style="background: #EAF3DE; border-color:#639922;">
-      <h3 style="color:#3B6D11; margin-bottom:5px;">🔗 你的專屬報名網址</h3>
-      <p style="font-size:12px; color:var(--text2); margin-bottom:10px;">請複製下方網址，傳給 Line 群組的球友，他們點擊就能直接進入這個房間報名。</p>
-      <input type="text" id="share-link" readonly style="margin-bottom:10px; background:#fff;">
-      <button class="submit-btn" style="background:#3B6D11; margin-top:0;" onclick="copyLink()">📋 複製網址</button>
-    </div>
-
     <div class="card">
       <div class="card-title">球局快速設定</div>
       <div class="form-group"><label>標題</label><input type="text" id="set-title"></div>
@@ -198,7 +200,7 @@ const db = firebase.database();
 const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 
-// 2. 判斷網址有沒有房間號碼 (例如 ?id=a1b2c3)
+// 2. 判斷網址有沒有房間號碼
 const urlParams = new URLSearchParams(window.location.search);
 const groupId = urlParams.get('id');
 
@@ -219,16 +221,16 @@ auth.onAuthStateChanged((user) => {
     document.getElementById('inp-name').value = user.displayName;
     
     if (!groupId) {
-      // 網址沒有房間號碼 -> 顯示大廳
+      // 在首頁 (沒有帶ID) -> 顯示大廳並讀取所有球局
       document.getElementById('lobby-screen').style.display = 'block';
+      loadLobbyGames();
     } else {
-      // 網址有房間號碼 -> 進入該房間
+      // 點進了某個球局 -> 進入該房間
       document.getElementById('room-screen').style.display = 'block';
-      document.getElementById('share-link').value = window.location.href;
       loadRoomData(groupId);
     }
   } else {
-    // 沒登入 -> 顯示登入畫面
+    // 沒登入
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('logout-btn').style.display = 'none';
     document.getElementById('user-display-name').textContent = "";
@@ -240,20 +242,51 @@ function signInWithGoogle() {
 }
 
 function signOut() {
-  auth.signOut().then(() => {
-    window.location.href = window.location.pathname; // 登出後回到首頁
-  });
+  auth.signOut().then(() => { window.location.href = window.location.pathname; });
 }
 
 // ==========================================
-// 房間與資料庫邏輯
+// 大廳 (揪團佈告欄) 邏輯
 // ==========================================
 
+function loadLobbyGames() {
+  db.ref('groups').on('value', (snapshot) => {
+    const data = snapshot.val();
+    const list = document.getElementById('games-list');
+    
+    if (!data) {
+      list.innerHTML = `<div class="card" style="text-align:center; padding: 2rem; color:var(--text3);">目前沒有開放的球局 🥲<br>點擊右上角自己創建一個吧！</div>`;
+      return;
+    }
+    
+    let html = "";
+    // 將 Firebase 資料轉成陣列，並反轉順序讓最新建立的在上面
+    const groupsArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse();
+    
+    groupsArray.forEach(group => {
+      const settings = group.settings;
+      if (settings) {
+        // 計算目前這團有幾人報名
+        const playerCount = group.players ? Object.keys(group.players).length : 0;
+        
+        html += `
+          <div class="card game-card" onclick="window.location.href='?id=${group.id}'">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
+              <h3 style="color:var(--text); margin:0;">${settings.title}</h3>
+              <span class="badge bg-green">${playerCount} 人報名</span>
+            </div>
+            <div style="font-size:13px; color:var(--text2); margin-bottom:4px;">📍 地點：${settings.venue}</div>
+            <div style="font-size:13px; color:var(--text2);">📅 時間：${settings.date} ${settings.time}</div>
+          </div>
+        `;
+      }
+    });
+    list.innerHTML = html;
+  });
+}
+
 function createNewGroup() {
-  // 產生一組隨機亂碼當作房間 ID
   const newId = Math.random().toString(36).substring(2, 8);
-  
-  // 初始化房間設定，把創建者(自己)設為 ownerUid
   const initialSettings = {
     ownerUid: currentUser.uid,
     title: currentUser.displayName + " 的羽球團",
@@ -261,17 +294,18 @@ function createNewGroup() {
   };
 
   db.ref('groups/' + newId + '/settings').set(initialSettings).then(() => {
-    // 創建成功後，自動在網址加上房間 ID 並重新整理
     window.location.href = window.location.pathname + "?id=" + newId;
   });
 }
 
+// ==========================================
+// 房間與報名邏輯
+// ==========================================
+
 function loadRoomData(id) {
-  // 監聽該房間的設定
   db.ref('groups/' + id + '/settings').on('value', (snapshot) => {
     const settings = snapshot.val();
     if (settings) {
-      // 判斷當下登入的人，是不是這個房間的創立者 (owner)
       if (settings.ownerUid === currentUser.uid) {
         isAdmin = true;
         document.body.classList.add('is-admin');
@@ -293,12 +327,9 @@ function loadRoomData(id) {
           document.getElementById('set-fee-m').value = settings.feeM || "";
           document.getElementById('set-fee-f').value = settings.feeF || "";
       }
-    } else {
-      showToast("找不到這個房間！可能已經被刪除。");
     }
   });
 
-  // 監聽該房間的名單
   db.ref('groups/' + id + '/players').on('value', (snapshot) => {
     const data = snapshot.val();
     players = data ? Object.keys(data).map(key => ({...data[key], fbKey: key})) : [];
@@ -314,7 +345,6 @@ function doSignup() {
   const hasSignedUp = players.some(p => p.uid === currentUser.uid);
   if (hasSignedUp) return showToast("您已經報名過囉！");
 
-  // 寫入該房間的 players 目錄下
   db.ref('groups/' + groupId + '/players').push({ 
     uid: currentUser.uid, name: currentUser.displayName,
     photoURL: currentUser.photoURL, phone: phone, time: Date.now() 
@@ -359,13 +389,6 @@ function renderRoster() {
       ${isAdmin ? `<button onclick="deletePlayer('${p.fbKey}')" style="color:#A32D2D; border:1px solid #A32D2D; border-radius:4px; padding:4px 8px; background:none; cursor:pointer">刪除</button>` : ''}
     </div>`
   }).join('');
-}
-
-function copyLink() {
-  const link = document.getElementById('share-link');
-  link.select();
-  document.execCommand("copy");
-  showToast("網址已複製！");
 }
 
 function switchTab(id) {
