@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>羽球揪團系統 - Ultimate Elite V9</title>
+<title>羽球揪團佈告欄 - Billboard Fixed V10</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 /* ===== 核心視覺設定 ===== */
@@ -21,7 +21,7 @@ body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; heigh
 /* 頂部導覽 */
 .header { background: var(--glass-header); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 0 1.5rem; position: sticky; top: 0; z-index: 40; height: 60px; display: flex; align-items: center; justify-content: space-between; }
 .logo { font-size: 18px; font-weight: 700; color: var(--neon-green); text-decoration: none; }
-.container { max-width: 960px; margin: 0 auto; padding: 1rem 1rem 5rem; }
+.container { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 5rem; }
 
 /* 分頁導覽列 */
 .tabs-wrapper { border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
@@ -57,21 +57,20 @@ label { font-size: 12px; color: var(--neon-green); margin-bottom: 5px; display: 
 .sub-drawer { margin-bottom: 8px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
 .drawer-header { display: flex; justify-content: space-between; padding: 12px 15px; cursor: pointer; background: rgba(255,255,255,0.03); font-size: 13px; }
 
-/* 等級分色 (比照圖表) */
+/* 等級分色 */
 .l1-3 { background: #4a7c1b; } .l4-5 { background: #a32d2d; } .l6-7 { background: #8e1c5c; } 
 .l8-9 { background: #b8860b; } .l10-12 { background: #104e8b; } .l13-15 { background: #696969; }
 .l16-18 { background: #000; border-color: var(--neon-green); }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+.toast { position: fixed; bottom: 2rem; left: 50%; transform: translate(-50%, 100px); background: #0a192f; border: 1px solid var(--neon-green); padding: 12px 24px; border-radius: 20px; font-size: 13px; color: var(--neon-green); transition: 0.3s; z-index: 200; text-align: center; }
+.toast.show { transform: translate(-50%, 0); }
 
 .player-row { display: flex; flex-direction: column; gap: 8px; padding: 15px 0; border-bottom: 1px solid var(--border); }
 .player-main { display: flex; align-items: center; gap: 12px; }
 .avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(100,255,218,0.1); border: 1px solid var(--border); overflow: hidden; }
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
 .admin-actions { display: flex; gap: 10px; margin-top: 5px; padding-left: 52px; }
-
-.toast { position: fixed; bottom: 2rem; left: 50%; transform: translate(-50%, 100px); background: #0a192f; border: 1px solid var(--neon-green); padding: 12px 24px; border-radius: 20px; font-size: 13px; color: var(--neon-green); transition: 0.3s; z-index: 200; text-align: center; }
-.toast.show { transform: translate(-50%, 0); }
 </style>
 </head>
 <body>
@@ -88,13 +87,13 @@ label { font-size: 12px; color: var(--neon-green); margin-bottom: 5px; display: 
   <div class="card" style="text-align:center; width:100%; max-width:400px; padding:2.5rem;">
     <div style="font-size:56px; margin-bottom:15px;">🏸</div>
     <h2 style="color:var(--neon-green); margin-bottom:20px;">深海羽球系統</h2>
-    <button class="btn-primary" onclick="signInWithGoogle()">Google 帳號登入</button>
+    <button class="btn-primary" onclick="signInWithGoogle()">使用 Google 帳號登入</button>
   </div>
 </div>
 
 <div id="lobby-screen" class="container">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
-    <h2 style="color:var(--neon-green);">佈告欄</h2>
+    <h2 style="color:var(--neon-green);">球局佈告欄</h2>
     <button id="create-btn" class="btn-primary" style="width:auto; margin:0; padding:8px 20px; display:none;" onclick="createNewGroup()">➕ 創建球局</button>
     <button id="apply-btn" class="btn-outline" style="font-size:12px; padding:8px 15px; border:1px solid var(--neon-green); color:var(--neon-green); background:none; border-radius:8px; cursor:pointer;" onclick="applyForHost()">申請當團主</button>
   </div>
@@ -110,6 +109,8 @@ label { font-size: 12px; color: var(--neon-green); margin-bottom: 5px; display: 
         <div class="drawer-content" id="content-active" style="display:none; padding:10px;"></div>
     </div>
   </div>
+
+  <h3 style="color:var(--text-dim); margin-top:30px; font-size:16px;">🏸 開放報名中</h3>
   <div id="other-games-container"></div>
 </div>
 
@@ -151,12 +152,12 @@ label { font-size: 12px; color: var(--neon-green); margin-bottom: 5px; display: 
         <input type="text" id="inp-name" onfocus="this.select()">
         <label>我的羽球等級 (1-18 級)</label>
         <select id="inp-level"><option value="">請選擇...</option>
-            <option value="1">1 級 (新手)</option><option value="2">2 級</option><option value="3">3 級</option>
-            <option value="4">4 級 (初階)</option><option value="5">5 級</option><option value="6">6 級 (初中)</option>
-            <option value="7">7 級</option><option value="8">8 級 (中階)</option><option value="9">9 級</option>
-            <option value="10">10 級 (中進)</option><option value="11">11 級</option><option value="12">12 級</option>
-            <option value="13">13 級 (高階)</option><option value="14">14 級</option><option value="15">15 級</option>
-            <option value="16">16 級 (職業)</option><option value="17">17 級</option><option value="18">18 級</option>
+            <option value="1">1 級</option><option value="2">2 級</option><option value="3">3 級</option>
+            <option value="4">4 級</option><option value="5">5 級</option><option value="6">6 級</option>
+            <option value="7">7 級</option><option value="8">8 級</option><option value="9">9 級</option>
+            <option value="10">10 級</option><option value="11">11 級</option><option value="12">12 級</option>
+            <option value="13">13 級</option><option value="14">14 級</option><option value="15">15 級</option>
+            <option value="16">16 級</option><option value="17">17 級</option><option value="18">18 級</option>
         </select>
         <label>聯絡電話 (僅團主可見)</label>
         <input type="tel" id="inp-phone" placeholder="09xx-xxx-xxx">
@@ -174,23 +175,18 @@ label { font-size: 12px; color: var(--neon-green); margin-bottom: 5px; display: 
 
   <div id="sec-admin" class="section admin-only">
     <div class="card">
-      <label>球館名稱</label><input type="text" id="set-venue">
+      <label>球館名稱</label><input type="text" id="set-venue" placeholder="必填：顯示在大廳的名稱">
       <label>詳細地址</label><input type="text" id="set-address">
       <label>場地號碼</label><input type="text" id="set-court-num">
       <label>打球日</label><select id="set-date"><option value="">請選擇...</option><option value="每週一">每週一</option><option value="每週二">每週二</option><option value="每週三">每週三</option><option value="每週四">每週四</option><option value="每週五">每週五</option><option value="每週六">每週六</option><option value="每週日">每週日</option></select>
-      <div style="display:flex; gap:10px;"><div style="flex:1;"><label>開始</label><input type="time" id="set-time-start"></div><div style="flex:1;"><label>結束</label><input type="time" id="set-time-end"></div></div>
+      <div style="display:flex; gap:10px;"><div style="flex:1;"><label>開始時間</label><input type="time" id="set-time-start"></div><div style="flex:1;"><label>結束時間</label><input type="time" id="set-time-end"></div></div>
       <label>限制人數</label><select id="set-limit-select"></select>
       <label>等級要求</label><div style="display:flex; gap:10px;"><select id="set-lv-min"></select><select id="set-lv-max"></select></div>
-      <label>男費用</label><input type="text" id="set-fee-m">
-      <label>女費用</label><input type="text" id="set-fee-f">
+      <label>男生費用</label><input type="text" id="set-fee-m">
+      <label>女生費用</label><input type="text" id="set-fee-f">
       <label>備註</label><textarea id="set-note"></textarea>
-      <button class="btn-primary" onclick="saveSettings()">💾 儲存設定</button>
-      
-      <div style="margin-top:30px; border-top:1px solid #333; padding-top:20px;">
-        <h3 style="color:var(--neon-red); font-size:14px; margin-bottom:10px;">🚫 團主黑名單</h3>
-        <div id="blacklist-view" style="font-size:12px; color:gray;">無</div>
-      </div>
-      <button class="btn-primary" style="color:var(--neon-red); border-color:var(--neon-red); margin-top:20px;" onclick="deleteGroup()">🗑️ 永久刪除球局</button>
+      <button class="btn-primary" onclick="saveSettings()">💾 儲存並同步</button>
+      <button class="btn-primary" style="color:var(--neon-red); border-color:var(--neon-red); margin-top:30px;" onclick="deleteGroup()">🗑️ 永久刪除球局</button>
     </div>
   </div>
 </div>
@@ -241,7 +237,6 @@ auth.onAuthStateChanged((user) => {
   if (user) {
     currentUser = user;
     document.getElementById('user-display-name').textContent = "Hi, " + user.displayName;
-    document.getElementById('inp-name').value = user.displayName;
     document.getElementById('logout-btn').style.display = 'block';
     checkHostStatus(user.uid);
     if (!groupId) { document.getElementById('lobby-screen').style.display = 'block'; loadLobbyGames(); }
@@ -259,36 +254,70 @@ function checkHostStatus(uid) {
   });
 }
 
+// 🟢 修正：強化佈告欄載入邏輯
 function loadLobbyGames() {
   db.ref('groups').on('value', (snap) => {
-    const data = snap.val(); if (!data) return;
+    const data = snap.val(); 
+    const otherContainer = document.getElementById('other-games-container');
+    const dList = document.getElementById('content-draft');
+    const aList = document.getElementById('content-active');
+    
+    if (!data) {
+        otherContainer.innerHTML = "<p style='text-align:center; padding:20px; color:gray;'>目前尚無開放球局</p>";
+        return;
+    }
+
     let dH = "", aH = ""; let dC = 0, aC = 0;
     const days = ["每週一","每週二","每週三","每週四","每週五","每週六","每週日"];
     const classified = { "每週一":[],"每週二":[],"每週三":[],"每週四":[],"每週五":[],"每週六":[],"每週日":[] };
 
     Object.keys(data).forEach(id => {
-      const s = data[id].settings, cnt = data[id].players ? Object.keys(data[id].players).length : 0;
-      const isComp = (s && s.venue); 
+      const g = data[id];
+      const s = g.settings;
+      if (!s) return;
+
+      const cnt = g.players ? Object.keys(g.players).length : 0;
+      const isComp = (s.venue && s.date); // 判定是否為正式發佈
+
       const card = `<div class="card" onclick="window.location.href='?id=${id}'" style="cursor:pointer; border-left:4px solid ${isComp?'var(--neon-green)':'var(--neon-orange)'}; padding:12px; margin-bottom:8px;">
-          <div style="display:flex; justify-content:space-between;"><b>${s.venue||"未命名"}</b><span class="badge">${cnt}/${s.limit||12}人</span></div></div>`;
-      if (s.ownerUid === currentUser.uid) { if (isComp) { aH += card; aC++; } else { dH += card; dC++; } }
-      else if (isComp && classified[s.date]) classified[s.date].push(card);
+          <div style="display:flex; justify-content:space-between;"><b>${s.venue||"未命名球局"}</b><span class="badge">${cnt}/${s.limit||12}人</span></div>
+          <div style="font-size:10px; color:gray; margin-top:5px;">${s.lvMin||1}-${s.lvMax||18}級 | ${s.date||"時間未定"} ${s.timeStart||""}</div></div>`;
+
+      // 1. 如果我是團主，放到管理中心
+      if (s.ownerUid === currentUser.uid) {
+        if (isComp) { aH += card; aC++; } 
+        else { dH += card; dC++; }
+      } 
+      // 2. 如果是別人的正式球局，分類到大廳
+      if (s.ownerUid !== currentUser.uid && isComp) {
+        if (classified[s.date]) classified[s.date].push(card);
+      }
     });
-    document.getElementById('draft-count').textContent = `(${dC})`; document.getElementById('active-count').textContent = `(${aC})`;
-    document.getElementById('content-draft').innerHTML = dH || "<p style='color:gray; font-size:12px;'>無草稿</p>";
-    document.getElementById('content-active').innerHTML = aH || "<p style='color:gray; font-size:12px;'>無發佈</p>";
-    let oH = ""; days.forEach(d => { if (classified[d] && classified[d].length > 0) { oH += `<div class="weekday-divider">${d}</div>`; classified[d].forEach(c => oH += c); } });
-    document.getElementById('other-games-container').innerHTML = oH || "<p style='text-align:center; padding:20px; color:gray;'>目前尚無開放球局</p>";
+
+    document.getElementById('draft-count').textContent = `(${dC})`;
+    document.getElementById('active-count').textContent = `(${aC})`;
+    dList.innerHTML = dH || "<p style='color:gray; font-size:12px;'>無草稿</p>";
+    aList.innerHTML = aH || "<p style='color:gray; font-size:12px;'>無發佈</p>";
+
+    let oH = "";
+    days.forEach(d => {
+      if (classified[d].length > 0) {
+        oH += `<div class="weekday-divider">${d}</div>`;
+        classified[d].forEach(c => oH += c);
+      }
+    });
+    otherContainer.innerHTML = oH || "<p style='text-align:center; padding:20px; color:gray;'>目前尚無其他開放球局</p>";
   });
 }
 
 function loadRoomData(id) {
   db.ref('groups/' + id + '/settings').on('value', (s) => {
     const st = s.val(); if (!st) return; groupSettings = st;
-    if (st.ownerUid === currentUser.uid) { isAdmin = true; document.body.classList.add('is-admin'); loadBlacklist(); }
+    if (st.ownerUid === currentUser.uid) { isAdmin = true; document.body.classList.add('is-admin'); }
+    
     document.getElementById('disp-venue').textContent = st.venue || "未命名球館";
     document.getElementById('disp-address').textContent = st.address || "無地址";
-    document.getElementById('disp-address').onclick = () => window.open('https://www.google.com/maps/search/' + encodeURIComponent(st.address));
+    document.getElementById('disp-address').onclick = () => { if(st.address) window.open('https://www.google.com/maps/search/' + encodeURIComponent(st.address)); };
     document.getElementById('disp-court-num').textContent = st.courtNum || "-";
     document.getElementById('disp-date').textContent = st.date || "-";
     document.getElementById('disp-time-range').textContent = (st.timeStart||"") + "~" + (st.timeEnd||"");
@@ -298,12 +327,18 @@ function loadRoomData(id) {
     if (st.note) { document.getElementById('note-box').style.display='block'; document.getElementById('disp-note').textContent=st.note; }
     
     if(isAdmin){
-      document.getElementById('set-venue').value = st.venue || ""; document.getElementById('set-address').value = st.address || "";
-      document.getElementById('set-court-num').value = st.courtNum || ""; document.getElementById('set-date').value = st.date || "";
-      document.getElementById('set-time-start').value = st.timeStart || ""; document.getElementById('set-time-end').value = st.timeEnd || "";
-      document.getElementById('set-limit-select').value = st.limit || 12; document.getElementById('set-lv-min').value = st.lvMin || 1;
-      document.getElementById('set-lv-max').value = st.lvMax || 18; document.getElementById('set-fee-m').value = st.feeM || "";
-      document.getElementById('set-fee-f').value = st.feeF || ""; document.getElementById('set-note').value = st.note || "";
+      document.getElementById('set-venue').value = st.venue || "";
+      document.getElementById('set-address').value = st.address || "";
+      document.getElementById('set-court-num').value = st.courtNum || "";
+      document.getElementById('set-date').value = st.date || "";
+      document.getElementById('set-time-start').value = st.timeStart || "";
+      document.getElementById('set-time-end').value = st.timeEnd || "";
+      document.getElementById('set-limit-select').value = st.limit || 12;
+      document.getElementById('set-lv-min').value = st.lvMin || 1;
+      document.getElementById('set-lv-max').value = st.lvMax || 18;
+      document.getElementById('set-fee-m').value = st.feeM || "";
+      document.getElementById('set-fee-f').value = st.feeF || "";
+      document.getElementById('set-note').value = st.note || "";
     }
   });
 
@@ -312,21 +347,24 @@ function loadRoomData(id) {
     renderRoster();
     document.getElementById('count-badge').textContent = players.length + "人";
     document.getElementById('disp-full-count').textContent = players.length + "/" + (groupSettings.limit || 12);
+    
     const me = players.find(p => p.uid === currentUser.uid);
-    if (players.length >= (groupSettings.limit || 12) && !me) { document.getElementById('signup-form-box').style.display='none'; document.getElementById('signup-full-msg').style.display='block'; }
-    else { document.getElementById('signup-form-box').style.display='block'; document.getElementById('signup-full-msg').style.display='none'; }
+    if (players.length >= (groupSettings.limit || 12) && !me) { 
+        document.getElementById('signup-form-box').style.display='none'; 
+        document.getElementById('signup-full-msg').style.display='block'; 
+    } else { 
+        document.getElementById('signup-form-box').style.display='block'; 
+        document.getElementById('signup-full-msg').style.display='none'; 
+    }
   });
 }
 
-async function doSignup() {
-  const blacksnap = await db.ref('blacklists/' + groupSettings.ownerUid + '/' + currentUser.uid).get();
-  if (blacksnap.exists()) return alert("❌ 您已被該團主列入黑名單，無法報名。");
-
+function doSignup() {
   const customName = document.getElementById('inp-name').value.trim();
   const lv = parseInt(document.getElementById('inp-level').value);
   const ph = document.getElementById('inp-phone').value.trim();
   if (!customName || !lv || !ph) return showToast("請完整填寫");
-  if (lv < groupSettings.lvMin || lv > groupSettings.lvMax) return showToast("等級不符要求！");
+  if (lv < (groupSettings.lvMin||1) || lv > (groupSettings.lvMax||18)) return showToast("等級不符要求！");
   if (players.some(p => p.uid === currentUser.uid)) return showToast("您已報名過囉！");
   
   db.ref('groups/' + groupId + '/players/' + currentUser.uid).set({ 
@@ -338,36 +376,26 @@ async function doSignup() {
 }
 
 function getLvClass(lv) {
-    const n = parseInt(lv); if(n<=3) return "l1-3"; if(n<=5) return "l4-5"; if(n<=7) return "l6-7"; 
+    const n = parseInt(lv);
+    if(n<=3) return "l1-3"; if(n<=5) return "l4-5"; if(n<=7) return "l6-7"; 
     if(n<=9) return "l8-9"; if(n<=12) return "l10-12"; if(n<=15) return "l13-15"; return "l16-18";
 }
 
 function renderRoster() {
   const l = document.getElementById('roster-list');
-  if (players.length === 0) { l.innerHTML = "<p style='text-align:center; color:gray;'>尚無人報名</p>"; return; }
+  if (players.length === 0) { l.innerHTML = "<p style='text-align:center; color:gray; padding:20px;'>尚無人報名</p>"; return; }
   l.innerHTML = players.map(p => {
-    const phoneId = `phone-${p.uid}`; const recordId = `record-${p.uid}`;
+    const phoneId = `phone-${p.uid}`;
     if (isAdmin) {
-        db.ref('groups/' + groupId + '/playerPhones/' + p.uid).once('value', s => { if(document.getElementById(phoneId)) document.getElementById(phoneId).textContent = s.val() || '無'; });
+        db.ref('groups/' + groupId + '/playerPhones/' + p.uid).once('value', s => { if(document.getElementById(phoneId)) document.getElementById(phoneId).textContent = s.val() || '無電話'; });
     }
-    db.ref('userRecords/' + p.uid).once('value', s => {
-        const d = s.val(); if (!d || !document.getElementById(recordId)) return;
-        const c = d.lateCancels ? Object.keys(d.lateCancels).length : 0;
-        const r = d.skillRatings ? Object.values(d.skillRatings) : [];
-        const avg = r.length ? (r.reduce((a,b)=>a+b.score,0)/r.length).toFixed(1) : '無';
-        document.getElementById(recordId).innerHTML = (c > 0 ? `<span class="warn-mark">⚠️ 臨退 ${c}</span>` : '') + ` <span style="color:gray; font-size:10px;">鑑定: ${avg}</span>`;
-    });
     return `<div class="player-row">
       <div class="player-main">
         <div class="avatar">${p.photoURL ? `<img src="${p.photoURL}">` : p.name[0]}</div>
-        <div style="flex:1"><b>${p.name}</b> <span class="lvl-badge ${getLvClass(p.level)}">LV.${p.level}</span><span id="${recordId}"></span>
+        <div style="flex:1"><b>${p.name}</b> <span class="lvl-badge ${getLvClass(p.level)}">LV.${p.level}</span>
         <div style="font-size:11px;color:gray" id="${phoneId}">${isAdmin ? '讀取中...' : '通訊已受保護'}</div></div>
       </div>
-      ${isAdmin ? `<div class="admin-actions">
-        <button class="btn-danger" onclick="markLateCancel('${p.uid}', '${p.name}')">標記臨退</button>
-        <button class="btn-danger" onclick="addToBlacklist('${p.uid}', '${p.name}')">封鎖</button>
-        <button class="btn-danger" style="color:var(--neon-green); border-color:var(--neon-green);" onclick="rateSkill('${p.uid}', '${p.name}')">實力鑑定</button>
-      </div>` : ''}
+      ${isAdmin ? `<div class="admin-actions"><button class="btn-danger" onclick="deletePlayer('${p.uid}')">移除</button></div>` : ''}
     </div>`;
   }).join('');
 }
@@ -383,27 +411,16 @@ function saveSettings() {
   }).then(() => showToast("設定已同步！")).catch(() => alert("權限不足"));
 }
 
-function markLateCancel(uid, n) { if(confirm(`確定標記 ${n} 為臨退？`)) db.ref('userRecords/'+uid+'/lateCancels').push({time:Date.now()}).then(()=>showToast("已紀錄")); }
-function addToBlacklist(uid, n) { if(confirm(`確定封鎖 ${n}？`)) db.ref('blacklists/'+currentUser.uid+'/'+uid).set({name:n, time:Date.now()}).then(()=>showToast("已封鎖")); }
-function rateSkill(uid, n) { const s = prompt("鑑定實力 (1-18)：", "10"); if(s) db.ref('userRecords/'+uid+'/skillRatings').push({score:parseInt(s), rater:currentUser.uid}).then(()=>showToast("鑑定完成")); }
-
-function loadBlacklist() {
-    db.ref('blacklists/' + currentUser.uid).on('value', s => {
-        const d = s.val(), el = document.getElementById('blacklist-view');
-        if(!d) { el.innerHTML = "無"; return; }
-        el.innerHTML = Object.keys(d).map(uid => `<div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>${d[uid].name}</span><button class="btn-danger" onclick="db.ref('blacklists/${currentUser.uid}/${uid}').remove()">解除</button></div>`).join('');
-    });
-}
-
 function createNewGroup() {
   const newId = Math.random().toString(36).substring(2, 8);
-  db.ref('groups/' + newId + '/settings').set({ ownerUid: currentUser.uid, venue: "", date: "每週一", lvMin: 1, lvMax: 18, limit: 12 })
+  db.ref('groups/' + newId + '/settings').set({ ownerUid: currentUser.uid, venue: "", date: "", lvMin: 1, lvMax: 18, limit: 12 })
     .then(() => window.location.href = "?id=" + newId).catch(() => alert("❌ 無權開團"));
 }
+function deletePlayer(k) { if(confirm("移除？")) { db.ref('groups/' + groupId + '/players/' + k).remove(); db.ref('groups/' + groupId + '/playerPhones/' + k).remove(); } }
 function deleteGroup() { if(confirm("確定永久刪除？")) db.ref('groups/' + groupId).remove().then(() => window.location.href = window.location.pathname); }
 function toggleDrawer(t) { const el = document.getElementById('content-' + t); el.style.display = el.style.display === 'none' ? 'block' : 'none'; }
 function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
-function applyForHost() { if(confirm("申請當團主？")) db.ref('hosts/' + currentUser.uid).set({status:'pending', name:currentUser.displayName, email:currentUser.email, time:Date.now()}).then(()=>showToast("已送出")); }
+function applyForHost() { if(confirm("申請當團主？")) { db.ref('hosts/' + currentUser.uid).set({status:'pending', name:currentUser.displayName, email:currentUser.email, time:Date.now()}).then(()=>showToast("已送出")); } }
 </script>
 </body>
 </html>
