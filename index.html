@@ -3,1204 +3,292 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>羽球臨打報名系統</title>
+<title>羽球臨打報名系統 - 雲端同步版</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ===== RESET & BASE ===== */
+/* ===== 基礎設定與配色 ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #F7F6F2;
-  --surface: #FFFFFF;
-  --surface2: #F1EFE8;
-  --border: rgba(0,0,0,0.1);
-  --border2: rgba(0,0,0,0.18);
-  --text: #1A1A18;
-  --text2: #5F5E5A;
-  --text3: #888780;
+  --bg: #F7F6F2; --surface: #FFFFFF; --surface2: #F1EFE8; --border: rgba(0,0,0,0.1);
+  --border2: rgba(0,0,0,0.18); --text: #1A1A18; --text2: #5F5E5A; --text3: #888780;
   --green: #3B6D11; --green-bg: #EAF3DE; --green-mid: #639922;
   --amber: #854F0B; --amber-bg: #FAEEDA; --amber-mid: #EF9F27;
   --red: #A32D2D; --red-bg: #FCEBEB;
   --blue: #185FA5; --blue-bg: #E6F1FB; --blue-mid: #85B7EB;
   --pink-bg: #FBEAF0; --pink-border: #ED93B1; --pink-text: #72243E;
-  --radius: 10px; --radius-sm: 6px;
-  --shadow: 0 1px 4px rgba(0,0,0,0.07);
+  --radius: 10px; --radius-sm: 6px; --shadow: 0 1px 4px rgba(0,0,0,0.07);
 }
-body {
-  font-family: 'Noto Sans TC', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  font-size: 15px;
-  line-height: 1.6;
-}
-
-/* ===== HEADER ===== */
-.site-header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 0 1.5rem;
-  position: sticky; top: 0; z-index: 40;
-}
-.header-inner {
-  max-width: 960px; margin: 0 auto;
-  display: flex; align-items: center; justify-content: space-between;
-  height: 56px;
-}
+body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.6; }
+.site-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 1.5rem; position: sticky; top: 0; z-index: 40; }
+.header-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
 .logo { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-.logo-icon { font-size: 20px; }
-.admin-toggle {
-  font-size: 12px; padding: 5px 12px;
-  border: 1px solid var(--border2); border-radius: 20px;
-  background: transparent; cursor: pointer; color: var(--text2);
-  transition: all .15s;
-}
-.admin-toggle:hover { background: var(--surface2); }
+.admin-toggle { font-size: 12px; padding: 5px 12px; border: 1px solid var(--border2); border-radius: 20px; background: transparent; cursor: pointer; color: var(--text2); transition: all .15s; }
 .admin-toggle.active { background: var(--text); color: #fff; border-color: var(--text); }
-
-/* ===== LAYOUT ===== */
 .container { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
-
-/* ===== TABS ===== */
-.tabs {
-  display: flex; gap: 4px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 1.5rem;
-  overflow-x: auto; -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-.tabs::-webkit-scrollbar { display: none; }
-.tab {
-  padding: 10px 16px; font-size: 13px; font-weight: 500;
-  border: none; background: none; cursor: pointer;
-  color: var(--text3); border-bottom: 2px solid transparent;
-  white-space: nowrap; flex-shrink: 0; transition: all .2s;
-  font-family: inherit;
-}
-.tab:hover { color: var(--text2); }
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; overflow-x: auto; scrollbar-width: none; }
+.tab { padding: 10px 16px; font-size: 13px; font-weight: 500; border: none; background: none; cursor: pointer; color: var(--text3); border-bottom: 2px solid transparent; white-space: nowrap; transition: all .2s; }
 .tab.active { color: var(--text); border-bottom-color: var(--text); }
-
-/* ===== SECTION ===== */
 .section { display: none; }
 .section.active { display: block; }
-
-/* ===== CARD ===== */
-.card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 1.25rem;
-  margin-bottom: 1rem; box-shadow: var(--shadow);
-}
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow); }
 .card-title { font-size: 15px; font-weight: 700; margin-bottom: 1rem; }
-.card-subtitle { font-size: 12px; color: var(--text3); margin-top: 2px; }
-
-/* ===== TEAM HERO ===== */
-.team-hero {
-  position: relative; border-radius: var(--radius);
-  overflow: hidden; margin-bottom: 1rem;
-  background: var(--surface2); border: 1px solid var(--border);
-}
-.team-hero-img {
-  width: 100%; height: 220px; object-fit: cover;
-  display: block;
-}
-.team-hero-placeholder {
-  width: 100%; height: 220px; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 8px;
-  color: var(--text3); cursor: pointer;
-  transition: background .15s;
-}
-.team-hero-placeholder:hover { background: #E8E6DE; }
-.team-hero-placeholder .ph-icon { font-size: 36px; opacity: .5; }
-.team-hero-placeholder .ph-text { font-size: 13px; }
-.team-hero-overlay {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: linear-gradient(transparent, rgba(0,0,0,.55));
-  padding: 1.5rem 1.25rem .75rem;
-  color: #fff;
-}
-.team-hero-name { font-size: 20px; font-weight: 700; }
-.team-hero-sub { font-size: 12px; opacity: .8; margin-top: 2px; }
-.photo-edit-btn {
-  position: absolute; top: 10px; right: 10px;
-  background: rgba(0,0,0,.45); color: #fff;
-  border: none; border-radius: 20px; padding: 4px 12px;
-  font-size: 11px; cursor: pointer; display: none;
-  font-family: inherit;
-}
-.is-admin .photo-edit-btn { display: block; }
-#photo-input { display: none; }
-
-/* ===== INFO GRID ===== */
-.info-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
-  gap: 10px; margin-bottom: 1rem;
-}
-.info-block {
-  background: var(--surface2); border-radius: var(--radius-sm);
-  padding: .75rem 1rem;
-}
-.info-label { font-size: 10px; color: var(--text3); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 4px; }
-.info-value { font-size: 14px; font-weight: 500; line-height: 1.5; }
-.info-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
-.map-btn {
-  display: inline-flex; align-items: center; gap: 5px;
-  margin-top: 6px; padding: 4px 12px; border-radius: 20px;
-  background: var(--blue-bg); color: var(--blue);
-  font-size: 12px; font-weight: 500; border: none; cursor: pointer;
-  text-decoration: none; font-family: inherit; transition: opacity .15s;
-}
-.map-btn:hover { opacity: .8; }
-
-/* ===== FEE ===== */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 10px; margin-bottom: 1rem; }
+.info-block { background: var(--surface2); border-radius: var(--radius-sm); padding: .75rem 1rem; }
+.info-label { font-size: 10px; color: var(--text3); margin-bottom: 4px; }
+.info-value { font-size: 14px; font-weight: 500; }
 .fee-row { display: flex; gap: 10px; margin-bottom: 1rem; }
 .fee-card { flex: 1; border-radius: var(--radius-sm); padding: .75rem 1rem; }
 .fee-m { background: var(--blue-bg); border: 1px solid var(--blue-mid); }
 .fee-f { background: var(--pink-bg); border: 1px solid var(--pink-border); }
-.fee-label { font-size: 11px; font-weight: 500; margin-bottom: 3px; }
-.fee-label-m { color: #0C447C; }
-.fee-label-f { color: var(--pink-text); }
-.fee-amount { font-size: 22px; font-weight: 700; }
-.fee-amount-m { color: var(--blue); }
-.fee-amount-f { color: #993556; }
-
-/* ===== BADGES & CHIPS ===== */
-.badge {
-  font-size: 11px; padding: 3px 9px; border-radius: 20px;
-  font-weight: 500; white-space: nowrap; display: inline-block;
-}
+.badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; display: inline-block; }
 .bg-green { background: var(--green-bg); color: var(--green); }
-.bg-amber { background: var(--amber-bg); color: var(--amber); }
 .bg-red { background: var(--red-bg); color: var(--red); }
-.bg-blue { background: var(--blue-bg); color: var(--blue); }
-.bg-gray { background: var(--surface2); color: var(--text2); }
-
-/* 18-level badge colors */
-.lv1{background:#D3F5C7;color:#1A4A0A} .lv2{background:#B8EDA6;color:#1A4A0A} .lv3{background:#9CE485;color:#1A4A0A}
-.lv4{background:#FDEABC;color:#5A3A00} .lv5{background:#FDD98A;color:#5A3A00}
-.lv6{background:#FBCA5C;color:#4A2800} .lv7{background:#FAC040;color:#4A2800}
-.lv8{background:#F9B020;color:#3A1E00} .lv9{background:#F7A010;color:#3A1E00}
-.lv10{background:#B5D4F4;color:#0C447C} .lv11{background:#85B7EB;color:#0C447C} .lv12{background:#559FE0;color:#042C53}
-.lv13{background:#DDDBD2;color:#2C2C2A} .lv14{background:#C8C6BC;color:#1A1A18} .lv15{background:#B4B2A9;color:#1A1A18}
-.lv16{background:#555452;color:#F1EFE8} .lv17{background:#2C2C2A;color:#F1EFE8} .lv18{background:#111110;color:#F1EFE8}
-
-.pay-row { display: flex; gap: 8px; flex-wrap: wrap; }
-.pay-chip {
-  display: flex; align-items: center; gap: 5px;
-  padding: 5px 12px; border-radius: 20px; font-size: 12px;
-  font-weight: 500; background: var(--green-bg); color: #27500A;
-  border: 1px solid #97C459;
-}
-
-.cancel-count { font-size: 11px; color: var(--red); background: var(--red-bg); padding: 2px 7px; border-radius: 10px; }
-
-/* ===== SLOTS BAR ===== */
 .slots-bar { background: var(--surface2); border-radius: 4px; height: 6px; overflow: hidden; margin-top: .5rem; }
-.slots-fill { height: 100%; border-radius: 4px; transition: width .4s; background: var(--green-mid); }
-.slots-fill.almost { background: var(--amber-mid); }
-.slots-fill.full { background: #E24B4A; }
-
-/* ===== FORMS ===== */
+.slots-fill { height: 100%; transition: width .4s; background: var(--green-mid); }
 .form-group { margin-bottom: 1rem; }
-.form-label { font-size: 13px; color: var(--text2); margin-bottom: 5px; display: block; font-weight: 500; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-@media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
-input, select, textarea {
-  width: 100%; padding: 9px 12px;
-  border: 1px solid var(--border2); border-radius: var(--radius-sm);
-  background: var(--surface); color: var(--text);
-  font-size: 14px; font-family: inherit; outline: none;
-  transition: border-color .15s;
-}
-input:focus, select:focus, textarea:focus { border-color: var(--blue-mid); }
-textarea { resize: vertical; min-height: 72px; }
-.gender-sel { display: flex; gap: 8px; }
-.gender-opt {
-  flex: 1; padding: 9px; border: 1px solid var(--border2);
-  border-radius: var(--radius-sm); font-size: 14px; text-align: center;
-  cursor: pointer; background: transparent; color: var(--text2);
-  transition: all .15s; font-family: inherit;
-}
-.gender-opt.sel-m { background: var(--blue-bg); color: #0C447C; border-color: var(--blue-mid); font-weight: 500; }
-.gender-opt.sel-f { background: var(--pink-bg); color: var(--pink-text); border-color: var(--pink-border); font-weight: 500; }
-
-/* ===== 18 LEVEL PICKER ===== */
-.lv18-section { margin-bottom: 8px; }
-.lv18-group-label {
-  font-size: 10px; font-weight: 700; padding: 2px 8px;
-  border-radius: 4px; display: inline-block; margin-bottom: 5px;
-}
-.lv18-row { display: flex; gap: 4px; flex-wrap: wrap; }
-.lv18-btn {
-  padding: 7px 10px; border: 1px solid var(--border2); border-radius: var(--radius-sm);
-  font-size: 12px; cursor: pointer; background: var(--surface); color: var(--text2);
-  transition: all .15s; font-family: inherit; font-weight: 500;
-  min-width: 44px; text-align: center;
-}
-.lv18-btn:hover { border-color: var(--border2); background: var(--surface2); }
-.lv18-btn.selected { border-width: 2px; font-weight: 700; }
-.lv-desc {
-  font-size: 12px; color: var(--text2); margin-top: 6px;
-  background: var(--surface2); border-radius: var(--radius-sm);
-  padding: 8px 10px; display: none; line-height: 1.6;
-  border-left: 3px solid var(--blue-mid);
-}
-.lv-desc.show { display: block; }
-
-/* ===== SUBMIT BTN ===== */
-.submit-btn {
-  width: 100%; padding: 11px; background: var(--text); color: #fff;
-  border: none; border-radius: var(--radius-sm); font-size: 14px;
-  font-weight: 700; cursor: pointer; font-family: inherit;
-  transition: opacity .15s; margin-top: .5rem;
-}
-.submit-btn:hover { opacity: .85; }
-
-/* ===== ACTION BTNS ===== */
-.action-btn {
-  font-size: 12px; padding: 5px 12px;
-  border: 1px solid var(--border2); border-radius: var(--radius-sm);
-  background: transparent; color: var(--text); cursor: pointer;
-  white-space: nowrap; flex-shrink: 0; font-family: inherit;
-  transition: all .15s;
-}
-.action-btn:hover { background: var(--surface2); }
-.action-btn.danger { border-color: #F09595; color: var(--red); }
-.action-btn.danger:hover { background: var(--red-bg); }
-.action-btn.primary { border-color: var(--blue-mid); color: var(--blue); }
-.action-btn.primary:hover { background: var(--blue-bg); }
-.action-btn.star { border-color: #FAC775; color: var(--amber); }
-.action-btn.star:hover { background: var(--amber-bg); }
-
-/* ===== PLAYER ROW ===== */
-.player-row {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 10px 0; border-bottom: 1px solid var(--border);
-}
-.player-row:last-child { border-bottom: none; }
-.avatar {
-  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 700;
-}
-.av-blue{background:#B5D4F4;color:#0C447C} .av-pink{background:#F4C0D1;color:#72243E}
-.av-green{background:#C0DD97;color:#27500A} .av-amber{background:#FAC775;color:#633806}
-.av-purple{background:#CECBF6;color:#3C3489} .av-coral{background:#F5C4B3;color:#712B13}
-.player-info { flex: 1; min-width: 0; }
-.player-name { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
-.player-meta { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; font-size: 12px; color: var(--text2); }
-
-/* ===== STAT CARDS ===== */
-.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1rem; }
-.stat-card { background: var(--surface2); border-radius: var(--radius-sm); padding: .75rem; text-align: center; }
-.stat-num { font-size: 22px; font-weight: 700; margin-bottom: 2px; }
-.stat-lbl { font-size: 11px; color: var(--text3); }
-
-/* ===== STAR RATING ===== */
-.star-item {
-  font-size: 22px; cursor: pointer; opacity: .2;
-  transition: opacity .12s, transform .12s; display: inline-block; line-height: 1;
-}
-.star-item.on { opacity: 1; color: #EF9F27; }
-.star-item:hover { opacity: .6; transform: scale(1.2); }
-
-/* ===== RULE INLINE ===== */
-.rule-inline { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: .75rem; }
-.rule-inline label { font-size: 13px; color: var(--text2); white-space: nowrap; }
-.rule-inline input { width: 64px; flex-shrink: 0; }
-.rule-inline select { width: auto; flex-shrink: 0; }
-
-/* ===== LV RANGE ===== */
-.lv-range { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-
-/* ===== MODAL ===== */
-.modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,.45); z-index: 100;
-  align-items: center; justify-content: center; padding: 1rem;
-}
-.modal-overlay.open { display: flex; }
-.modal {
-  background: var(--surface); border-radius: var(--radius);
-  padding: 1.5rem; width: min(460px, 100%);
-  box-shadow: 0 8px 32px rgba(0,0,0,.15);
-  max-height: 90vh; overflow-y: auto;
-}
-.modal-title { font-size: 16px; font-weight: 700; margin-bottom: 1rem; }
-.modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1rem; }
-
-/* ===== DIVIDER ===== */
-.divider { height: 1px; background: var(--border); margin: 1rem 0; }
-
-/* ===== ANON NOTE ===== */
-.anon-note {
-  font-size: 11px; color: var(--text3); margin-top: 6px;
-  padding: 6px 10px; background: var(--surface2);
-  border-radius: var(--radius-sm);
-}
-
-/* ===== TOAST ===== */
-.toast {
-  position: fixed; bottom: 1.5rem; left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: var(--text); color: #fff;
-  padding: 10px 20px; border-radius: 20px; font-size: 13px;
-  transition: transform .3s; z-index: 200; pointer-events: none;
-  font-weight: 500;
-}
+.form-label { font-size: 13px; color: var(--text2); margin-bottom: 5px; display: block; }
+input, select, textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--border2); border-radius: var(--radius-sm); font-size: 14px; }
+.submit-btn { width: 100%; padding: 11px; background: var(--text); color: #fff; border: none; border-radius: var(--radius-sm); font-weight: 700; cursor: pointer; margin-top: .5rem; transition: opacity 0.2s; }
+.submit-btn:hover { opacity: 0.8; }
+.player-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; background: #CECBF6; color: #3C3489; }
+.toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--text); color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; transition: transform .3s; z-index: 200; }
 .toast.show { transform: translateX(-50%) translateY(0); }
-
-/* ===== ADMIN PANEL ===== */
-.admin-panel { display: none; }
 .is-admin .admin-panel { display: block; }
-.is-admin .player-only { display: none; }
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 600px) {
-  .fee-row { flex-direction: column; }
-  .container { padding: 1rem .75rem 4rem; }
-}
+.admin-panel { display: none; }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="site-header">
   <div class="header-inner">
-    <div class="logo"><span class="logo-icon">🏸</span>羽球臨打報名</div>
+    <div class="logo">🏸 羽球臨打報名</div>
     <button class="admin-toggle" id="admin-toggle" onclick="toggleAdmin()">團主模式</button>
   </div>
 </header>
 
-<!-- MAIN -->
 <div class="container" id="app">
-
-  <!-- TABS -->
   <div class="tabs">
     <button class="tab active" onclick="switchTab('game')">球局資訊</button>
     <button class="tab" onclick="switchTab('signup')">報名臨打</button>
     <button class="tab" onclick="switchTab('roster')">報名名單</button>
-    <button class="tab admin-panel" onclick="switchTab('admin')">團主管理</button>
-    <button class="tab" onclick="switchTab('rate')">評分</button>
+    <button class="tab admin-panel" onclick="switchTab('admin')">管理設定</button>
   </div>
 
-  <!-- ===== 球局資訊 ===== -->
   <div id="sec-game" class="section active">
-
-    <!-- Team Hero Photo -->
-    <div class="team-hero" id="team-hero">
-      <div class="team-hero-placeholder" id="hero-placeholder" onclick="document.getElementById('photo-input').click()">
-        <div class="ph-icon">📷</div>
-        <div class="ph-text">點擊上傳球團照片</div>
-      </div>
-      <img id="hero-img" class="team-hero-img" style="display:none" alt="球團照片">
-      <div class="team-hero-overlay" id="hero-overlay" style="display:none">
-        <div class="team-hero-name" id="hero-team-name">鳳鳴羽球團</div>
-        <div class="team-hero-sub">由 陳團主 發起 · 固定每週四出沒</div>
-      </div>
-      <button class="photo-edit-btn" onclick="document.getElementById('photo-input').click()">更換照片</button>
-      <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(event)">
-    </div>
-
     <div class="card">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:1rem">
-        <div>
-          <div style="font-size:18px;font-weight:700" id="disp-title">週四夜間臨打</div>
-          <div class="card-subtitle" id="disp-host">由 陳團主 發起</div>
-        </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:1rem">
+        <h2 id="disp-title">載入中...</h2>
         <span class="badge bg-green" id="status-badge">報名中</span>
       </div>
-
       <div class="info-grid">
-        <div class="info-block">
-          <div class="info-label">日期 / 時間</div>
-          <div class="info-value" id="disp-date">2026/04/09 (四)</div>
-          <div class="info-sub" id="disp-time">19:00 — 22:00（3小時）</div>
-        </div>
-        <div class="info-block">
-          <div class="info-label">球館 / 場地</div>
-          <div class="info-value" id="disp-venue">鳳鳴羽球館</div>
-          <div class="info-sub" id="disp-court">第 2 場地</div>
-        </div>
-        <div class="info-block">
-          <div class="info-label">實際地址</div>
-          <div class="info-value" id="disp-addr" style="font-size:13px">台北市大安區復興南路一段 100 號</div>
-          <button class="map-btn" onclick="openMap()">📍 Google Maps 導航</button>
-        </div>
-        <div class="info-block">
-          <div class="info-label">報名截止</div>
-          <div class="info-value" id="disp-deadline">04/08 22:00</div>
-          <div class="info-sub" id="disp-cancel-rule">取消需提前 <strong>24 小時</strong></div>
-        </div>
+        <div class="info-block"><div class="info-label">地點</div><div id="disp-venue" class="info-value">-</div></div>
+        <div class="info-block"><div class="info-label">時間</div><div id="disp-time" class="info-value">-</div></div>
+        <div class="info-block"><div class="info-label">日期</div><div id="disp-date" class="info-value">-</div></div>
       </div>
-
       <div class="fee-row">
-        <div class="fee-card fee-m">
-          <div class="fee-label fee-label-m">男生費用</div>
-          <div class="fee-amount fee-amount-m" id="disp-fee-m">$200</div>
-        </div>
-        <div class="fee-card fee-f">
-          <div class="fee-label fee-label-f">女生費用</div>
-          <div class="fee-amount fee-amount-f" id="disp-fee-f">$150</div>
-        </div>
-      </div>
-
-      <div class="info-block" style="margin-bottom:1rem">
-        <div class="info-label" style="margin-bottom:6px">付款方式</div>
-        <div class="pay-row" id="disp-pay">
-          <div class="pay-chip">💵 現金（現場繳交）</div>
-          <div class="pay-chip">💚 Line Pay（掃碼付款）</div>
-        </div>
-      </div>
-
-      <div class="info-block">
-        <div class="info-label" style="margin-bottom:6px">參加程度要求（台灣羽球推廣協會18級制）</div>
-        <div class="lv-range" id="disp-req">
-          <span class="badge lv6">第 6 級</span>
-          <span style="font-size:12px;color:var(--text3)">至</span>
-          <span class="badge lv10">第 10 級</span>
-          <span class="badge bg-gray">其他程度請私訊</span>
-        </div>
+        <div class="fee-card fee-m">男生 <span id="disp-fee-m">-</span></div>
+        <div class="fee-card fee-f">女生 <span id="disp-fee-f">-</span></div>
       </div>
     </div>
-
     <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <span style="font-size:13px;color:var(--text2)">報名進度</span>
-        <span style="font-size:13px;font-weight:700"><span id="count">7</span> / <span id="max-slots">12</span> 人</span>
+      <div style="display:flex;justify-content:space-between;font-size:13px">
+        <span>報名人數</span>
+        <span><span id="count">0</span> / <span id="max-slots">12</span></span>
       </div>
-      <div class="slots-bar"><div class="slots-fill almost" id="slots-fill" style="width:58%"></div></div>
-      <div style="font-size:12px;color:var(--text3);margin-top:6px">尚餘 <span id="remain">5</span> 個名額</div>
+      <div class="slots-bar"><div class="slots-fill" id="slots-fill" style="width:0%"></div></div>
     </div>
-
   </div>
 
-  <!-- ===== 報名臨打 ===== -->
   <div id="sec-signup" class="section">
     <div class="card">
       <div class="card-title">填寫報名資料</div>
       <div class="form-group">
         <label class="form-label">姓名</label>
-        <input type="text" id="inp-name" placeholder="請輸入真實姓名">
+        <input type="text" id="inp-name" placeholder="請輸入姓名">
       </div>
       <div class="form-group">
-        <label class="form-label">性別</label>
-        <div class="gender-sel">
-          <div class="gender-opt" id="g-m" onclick="selectGender('m')">男生</div>
-          <div class="gender-opt" id="g-f" onclick="selectGender('f')">女生</div>
-        </div>
+        <label class="form-label">電話</label>
+        <input type="tel" id="inp-phone" placeholder="09xx-xxx-xxx">
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">聯絡電話</label>
-          <input type="tel" id="inp-phone" placeholder="09xx-xxx-xxx">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Line ID（選填）</label>
-          <input type="text" id="inp-line" placeholder="line_id">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">自評實力等級（台灣羽球推廣協會18級制）</label>
-        <div id="lv18-signup"></div>
-        <div class="lv-desc" id="signup-lv-desc"></div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">付款方式</label>
-        <select id="inp-pay">
-          <option value="cash">現金（現場繳交）</option>
-          <option value="linepay">Line Pay（掃碼付款）</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">備註</label>
-        <textarea id="inp-note" placeholder="例：慣用左手、有舊傷請告知..."></textarea>
-      </div>
-      <button class="submit-btn" onclick="doSignup()">確認送出報名 →</button>
+      <button class="submit-btn" onclick="doSignup()">確認報名</button>
     </div>
   </div>
 
-  <!-- ===== 報名名單 ===== -->
   <div id="sec-roster" class="section">
-    <div class="stat-grid">
-      <div class="stat-card"><div class="stat-num" id="s-total">7</div><div class="stat-lbl">已報名</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--red)" id="s-cancel">2</div><div class="stat-lbl">有取消紀錄</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--amber-mid)" id="s-warn">1</div><div class="stat-lbl">實力待確認</div></div>
-    </div>
-    <div class="card" id="roster-list"></div>
+    <div class="card" id="roster-list">暫無報名資料</div>
   </div>
 
-  <!-- ===== 團主管理 ===== -->
   <div id="sec-admin" class="section">
-
-    <div class="card admin-panel">
-      <div class="card-title">球局基本設定</div>
-      <div class="form-group">
-        <label class="form-label">球局標題</label>
-        <input type="text" id="set-title" value="週四夜間臨打">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">球館名稱</label>
-          <input type="text" id="set-venue" value="鳳鳴羽球館">
-        </div>
-        <div class="form-group">
-          <label class="form-label">場地編號</label>
-          <input type="text" id="set-court" value="第 2 場地">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">實際地址（Google Maps 搜尋用）</label>
-        <input type="text" id="set-addr" value="台北市大安區復興南路一段100號">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">日期</label>
-          <input type="text" id="set-date" value="2026/04/09 (四)">
-        </div>
-        <div class="form-group">
-          <label class="form-label">時間</label>
-          <input type="text" id="set-time" value="19:00 — 22:00（3小時）">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">男生費用</label>
-          <input type="text" id="set-fee-m" value="$200">
-        </div>
-        <div class="form-group">
-          <label class="form-label">女生費用</label>
-          <input type="text" id="set-fee-f" value="$150">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">程度下限（第幾級）</label>
-          <select id="set-lv-min"></select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">程度上限（第幾級）</label>
-          <select id="set-lv-max"></select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">付款方式</label>
-        <select id="set-pay-method">
-          <option value="both">現金 + Line Pay</option>
-          <option value="cash">僅現金</option>
-          <option value="linepay">僅 Line Pay</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">球團名稱（照片上顯示）</label>
-        <input type="text" id="set-team-name" value="鳳鳴羽球團">
-      </div>
-      <button class="action-btn primary" onclick="saveVenue()" style="margin-top:.25rem">儲存基本設定</button>
-    </div>
-
-    <div class="card admin-panel">
-      <div class="card-title">臨時取消規則設定</div>
-      <div class="rule-inline">
-        <label>開打前</label>
-        <input type="number" id="rule-hours" value="24" min="1" max="168">
-        <select id="rule-unit">
-          <option value="hour">小時</option>
-          <option value="day">天</option>
-        </select>
-        <label>內取消 → 記錄為臨時取消</label>
-      </div>
-      <div class="rule-inline">
-        <label>累積</label>
-        <input type="number" id="rule-limit" value="3" min="1" max="10" style="width:60px">
-        <label>次後需團主手動核准報名</label>
-      </div>
-      <button class="action-btn primary" onclick="saveRules()">儲存規則</button>
-    </div>
-
-    <div class="card admin-panel">
-      <div class="card-title">球員實力評分（你的評分對球員匿名）</div>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:.75rem">球員只會看到多人平均建議級距，不知道評分來源</div>
-      <div id="admin-score-list"></div>
-    </div>
-
-    <div class="card admin-panel">
-      <div class="card-title">取消紀錄管理</div>
-      <div id="admin-cancel-list"></div>
-    </div>
-  </div>
-
-  <!-- ===== 評分 ===== -->
-  <div id="sec-rate" class="section">
-    <div class="card player-only">
-      <div class="card-title">匿名評分球團</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:1rem">你的評分完全匿名，每場活動限評一次，幫助球團持續進步</div>
-      <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:1rem">
-        <div style="font-size:14px;font-weight:700;margin-bottom:.25rem" id="rate-event-title">週四夜間臨打 — 2026/04/09</div>
-        <div style="font-size:12px;color:var(--text3);margin-bottom:1rem">陳團主 · 鳳鳴羽球館</div>
-        <div class="divider"></div>
-        <div id="team-rate-form"></div>
-      </div>
-    </div>
-
     <div class="card">
-      <div class="card-title">球團評分結果（公開）</div>
-      <div id="team-rate-result"></div>
-    </div>
-
-    <div class="card admin-panel">
-      <div class="card-title">球員對你的評分回饋（匿名彙整）</div>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:.75rem">評分結果已去識別化，無法追蹤個別評分者</div>
-      <div id="admin-feedback-detail"></div>
-    </div>
-  </div>
-
-</div><!-- /container -->
-
-<!-- MODALS -->
-<div class="modal-overlay" id="cancel-modal">
-  <div class="modal">
-    <div class="modal-title">記錄臨時取消</div>
-    <div style="font-size:13px;color:var(--text2);margin-bottom:.75rem" id="cancel-modal-name"></div>
-    <div class="form-group">
-      <label class="form-label">取消類型</label>
-      <select id="cancel-type">
-        <option>臨時取消（規則時限內）</option>
-        <option>開打當天取消</option>
-        <option>無故未出現</option>
-        <option>其他</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">備註（選填）</label>
-      <input type="text" id="cancel-note" placeholder="例：家中臨時有事">
-    </div>
-    <div class="modal-btns">
-      <button class="action-btn" onclick="closeModal('cancel-modal')">取消</button>
-      <button class="action-btn danger" onclick="confirmCancel()">確認記錄</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="score-modal">
-  <div class="modal">
-    <div class="modal-title">評分球員實力（匿名）</div>
-    <div style="font-size:14px;font-weight:700;margin-bottom:.25rem" id="score-modal-name"></div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:1rem">
-      自評：<span id="score-modal-self"></span>
-    </div>
-    <div class="form-group">
-      <label class="form-label">你認為此球員實際程度（18 級制）</label>
-      <div id="lv18-score-modal"></div>
-    </div>
-    <div class="anon-note">此評分匿名對球員顯示，球員只會看到平均建議級距</div>
-    <div class="modal-btns">
-      <button class="action-btn" onclick="closeModal('score-modal')">取消</button>
-      <button class="action-btn primary" onclick="confirmScore()">確認評分</button>
+      <div class="card-title">球局快速設定</div>
+      <div class="form-group"><label>標題</label><input type="text" id="set-title"></div>
+      <div class="form-group"><label>球館</label><input type="text" id="set-venue"></div>
+      <div class="form-group"><label>日期</label><input type="text" id="set-date"></div>
+      <div class="form-group"><label>時間</label><input type="text" id="set-time"></div>
+      <div class="form-group"><label>男生費用</label><input type="text" id="set-fee-m"></div>
+      <div class="form-group"><label>女生費用</label><input type="text" id="set-fee-f"></div>
+      <button class="submit-btn" onclick="saveSettings()" style="background:#3B6D11">儲存並同步到雲端</button>
+      <button class="submit-btn" onclick="clearPlayers()" style="background:#A32D2D; margin-top:10px">清空所有報名名單</button>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<script>
-/* ===========================
-   DATA
-=========================== */
-const LV_DATA = [
-  {n:1, group:'新手階', desc:'剛接觸羽球，學會比賽規則，懂得比賽禮儀'},
-  {n:2, group:'新手階', desc:'中場距離中高球來回10拍，發球有一半以上成功率'},
-  {n:3, group:'新手階', desc:'定點有一半可以打到2/3場後，發球有九成以上成功率'},
-  {n:4, group:'初階',   desc:'清楚正確握拍法；長球男生定點可打到後場，女生可打到中後場；會基本平推；正反轉拍不順暢'},
-  {n:5, group:'初階',   desc:'清楚正確握拍法，略懂基本腳步，基本球路在非受迫時有一定的表現'},
-  {n:6, group:'初中階', desc:'清楚正確握拍法，略懂基本腳步，懂基本輪轉，已開始會殺球及切球，非受迫時移動長球可至中後場'},
-  {n:7, group:'初中階', desc:'殺球、切球或長球不論定點或移動，成功率及穩定性有七成以上，已有基本防守能力，但無變化'},
-  {n:8, group:'中階',   desc:'有基本戰略及打點，熟悉輪轉概念，切殺長吊均有七成以上準確性，防守有些微變化'},
-  {n:9, group:'中階',   desc:'切殺長吊中有三種球路有九成以上準確性及質量，發力及力道已有強度，防守要有一定程度的變化及穩定性'},
-  {n:10,group:'中進階', desc:'輪轉概念熟念並能活化運用，策略性戰略及打點皆能有效得分'},
-  {n:11,group:'中進階', desc:'切殺長吊皆具準確性，發力及速度、策略兼具，輕鬆完成反拍各種球路，防守具有威脅性'},
-  {n:12,group:'中進階', desc:'有高速度移位及靈敏地走位與步法，殺切吊都具有高強度侵略性，常有一擊必殺的球路'},
-  {n:13,group:'高階',   desc:'各種球路都穩定熟練，防守無死角、球速快質量高、戰略組織、爆發力都屬上等（校隊前段、體保、社會甲組）'},
-  {n:14,group:'高階',   desc:'各種球路都穩定熟練，防守無死角、球速快質量高、戰略組織、爆發力都屬上等（校隊前段、體保、社會甲組）'},
-  {n:15,group:'高階',   desc:'各種球路都穩定熟練，防守無死角、球速快質量高、戰略組織、爆發力都屬上等（校隊前段、體保、社會甲組）'},
-  {n:16,group:'職業級', desc:'各種球路、戰術、步法已爐火純青，且發展出個人獨特球路風格（甲組、國家代表選手）'},
-  {n:17,group:'職業級', desc:'各種球路、戰術、步法已爐火純青，且發展出個人獨特球路風格（甲組、國家代表選手）'},
-  {n:18,group:'職業級', desc:'各種球路、戰術、步法已爐火純青，且發展出個人獨特球路風格（甲組、國家代表選手）'},
-];
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
 
-const GROUP_STYLE = {
-  '新手階': {bg:'#B8EDA6', color:'#1A4A0A'},
-  '初階':   {bg:'#FDD98A', color:'#5A3A00'},
-  '初中階': {bg:'#FAC040', color:'#3A1E00'},
-  '中階':   {bg:'#F7A010', color:'#3A1E00'},
-  '中進階': {bg:'#85B7EB', color:'#0C447C'},
-  '高階':   {bg:'#C8C6BC', color:'#1A1A18'},
-  '職業級': {bg:'#2C2C2A', color:'#F1EFE8'},
+<script>
+// 1. Firebase 配置 (對應你的 badminton-1006 專案)
+const firebaseConfig = {
+  apiKey: "AIzaSyC8sgJZoA7U1rUY8mnLg-uZKkhMkaSVQ0c",
+  authDomain: "badminton-1006.firebaseapp.com",
+  projectId: "badminton-1006",
+  storageBucket: "badminton-1006.firebasestorage.app",
+  messagingSenderId: "103056676038",
+  appId: "1:1030566766038:web:e73fbb8976fec3cf423077",
+  databaseURL: "https://badminton-1006-default-rtdb.firebaseio.com"
 };
 
-let rules = { hours: 24, unit: 'hour', limit: 3 };
-let selectedLv = null;
-let selectedGender = null;
-let cancelTarget = null;
-let scoreTarget = null;
-let scoreModalLv = null;
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let players = [];
 let isAdmin = false;
-let hasRated = false;
-let teamRating = { sum: 0, count: 3 }; // start with 3 mock votes
 
-let players = [
-  {id:1, name:'王小明', gender:'m', phone:'0912-345-678', lv:8,  adminScores:[], cancelCount:0, pay:'cash',    note:'',       approved:true},
-  {id:2, name:'李大華', gender:'m', phone:'0923-456-789', lv:11, adminScores:[9], cancelCount:2, pay:'linepay', note:'慣用左手', approved:true},
-  {id:3, name:'張美玲', gender:'f', phone:'0934-567-890', lv:7,  adminScores:[], cancelCount:0, pay:'linepay', note:'',       approved:true},
-  {id:4, name:'陳志偉', gender:'m', phone:'0945-678-901', lv:5,  adminScores:[7], cancelCount:1, pay:'cash',    note:'',       approved:true},
-  {id:5, name:'林雅芳', gender:'f', phone:'0956-789-012', lv:9,  adminScores:[], cancelCount:3, pay:'linepay', note:'',       approved:false},
-  {id:6, name:'黃建國', gender:'m', phone:'0967-890-123', lv:14, adminScores:[14], cancelCount:0, pay:'cash',   note:'',       approved:true},
-  {id:7, name:'吳淑惠', gender:'f', phone:'0978-901-234', lv:8,  adminScores:[], cancelCount:0, pay:'linepay', note:'',       approved:true},
-];
+// 2. 監聽資料庫 - 球員名單
+db.ref('players').on('value', (snapshot) => {
+  const data = snapshot.val();
+  players = data ? Object.keys(data).map(key => ({...data[key], fbKey: key})) : [];
+  renderRoster();
+  updateCount();
+});
 
-/* ===========================
-   ADMIN TOGGLE
-=========================== */
+// 3. 監聽資料庫 - 球局設定
+db.ref('settings').on('value', (snapshot) => {
+  const settings = snapshot.val();
+  if (settings) {
+    document.getElementById('disp-title').textContent = settings.title || "羽球臨打團";
+    document.getElementById('disp-venue').textContent = settings.venue || "-";
+    document.getElementById('disp-date').textContent = settings.date || "-";
+    document.getElementById('disp-time').textContent = settings.time || "-";
+    document.getElementById('disp-fee-m').textContent = settings.feeM || "-";
+    document.getElementById('disp-fee-f').textContent = settings.feeF || "-";
+    
+    if(isAdmin){
+        document.getElementById('set-title').value = settings.title || "";
+        document.getElementById('set-venue').value = settings.venue || "";
+        document.getElementById('set-date').value = settings.date || "";
+        document.getElementById('set-time').value = settings.time || "";
+        document.getElementById('set-fee-m').value = settings.feeM || "";
+        document.getElementById('set-fee-f').value = settings.feeF || "";
+    }
+  }
+});
+
+// 權限切換 (預設密碼 1234)
 function toggleAdmin() {
+  if (!isAdmin) {
+    const pw = prompt("請輸入管理密碼：\n(預設測試密碼為 1234)");
+    if (pw !== "1234") return showToast("密碼錯誤！");
+  }
   isAdmin = !isAdmin;
   document.getElementById('app').classList.toggle('is-admin', isAdmin);
   document.getElementById('admin-toggle').classList.toggle('active', isAdmin);
   document.getElementById('admin-toggle').textContent = isAdmin ? '✓ 團主模式' : '團主模式';
-  showToast(isAdmin ? '已進入團主模式' : '已切換為球員視角');
+  showToast(isAdmin ? "進入管理模式" : "回到球員模式");
 }
 
-/* ===========================
-   TAB SWITCHING
-=========================== */
-function switchTab(id) {
-  const ids = ['game','signup','roster','admin','rate'];
-  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', ids[i] === id));
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById('sec-' + id).classList.add('active');
-  if (id === 'roster') renderRoster();
-  if (id === 'admin')  renderAdmin();
-  if (id === 'rate')   renderRatePage();
-}
-
-/* ===========================
-   PHOTO UPLOAD
-=========================== */
-function handlePhoto(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const img = document.getElementById('hero-img');
-    img.src = ev.target.result;
-    img.style.display = 'block';
-    document.getElementById('hero-placeholder').style.display = 'none';
-    document.getElementById('hero-overlay').style.display = 'block';
-    showToast('✓ 照片已上傳');
-  };
-  reader.readAsDataURL(file);
-}
-
-/* ===========================
-   MAP
-=========================== */
-function openMap() {
-  const addr = document.getElementById('set-addr') ? document.getElementById('set-addr').value : '台北市大安區復興南路一段100號';
-  window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(addr), '_blank');
-}
-
-/* ===========================
-   LEVEL 18 PICKER
-=========================== */
-function buildLv18Picker(containerId, onPickCallback) {
-  const c = document.getElementById(containerId);
-  if (!c) return;
-  const groups = [...new Set(LV_DATA.map(l => l.group))];
-  let html = '';
-  groups.forEach(g => {
-    const items = LV_DATA.filter(l => l.group === g);
-    const gs = GROUP_STYLE[g];
-    html += `<div class="lv18-section">
-      <span class="lv18-group-label" style="background:${gs.bg};color:${gs.color}">${g}</span>
-      <div class="lv18-row">`;
-    items.forEach(lv => {
-      html += `<button class="lv18-btn" data-lv="${lv.n}" data-container="${containerId}" onclick="onLvPick(this,'${containerId}')">${lv.n} 級</button>`;
-    });
-    html += `</div></div>`;
-  });
-  c.innerHTML = html;
-}
-
-function onLvPick(btn, containerId) {
-  const n = parseInt(btn.dataset.lv);
-  document.querySelectorAll(`#${containerId} .lv18-btn`).forEach(b => {
-    b.classList.remove('selected');
-    b.style.cssText = '';
-  });
-  btn.classList.add('selected');
-  // apply lv color class
-  btn.className = `lv18-btn selected lv${n}`;
-
-  if (containerId === 'lv18-signup') {
-    selectedLv = n;
-    const desc = document.getElementById('signup-lv-desc');
-    desc.textContent = LV_DATA[n-1].desc;
-    desc.classList.add('show');
-  } else if (containerId === 'lv18-score-modal') {
-    scoreModalLv = n;
-  }
-}
-
-function buildLvSelects() {
-  ['set-lv-min','set-lv-max'].forEach((id, i) => {
-    const sel = document.getElementById(id);
-    if (!sel) return;
-    sel.innerHTML = '';
-    LV_DATA.forEach(lv => {
-      const opt = document.createElement('option');
-      opt.value = lv.n;
-      opt.textContent = `第 ${lv.n} 級 — ${lv.group}`;
-      if ((i === 0 && lv.n === 6) || (i === 1 && lv.n === 10)) opt.selected = true;
-      sel.appendChild(opt);
-    });
-  });
-}
-
-/* ===========================
-   GENDER SELECT
-=========================== */
-function selectGender(g) {
-  selectedGender = g;
-  document.getElementById('g-m').className = 'gender-opt' + (g === 'm' ? ' sel-m' : '');
-  document.getElementById('g-f').className = 'gender-opt' + (g === 'f' ? ' sel-f' : '');
-}
-
-/* ===========================
-   SIGNUP
-=========================== */
+// 報名功能
 function doSignup() {
-  const name  = document.getElementById('inp-name').value.trim();
+  const name = document.getElementById('inp-name').value.trim();
   const phone = document.getElementById('inp-phone').value.trim();
-  if (!name)          { showToast('請填寫姓名'); return; }
-  if (!selectedGender){ showToast('請選擇性別'); return; }
-  if (!phone)         { showToast('請填寫聯絡電話'); return; }
-  if (!selectedLv)    { showToast('請選擇實力等級'); return; }
+  if (!name || !phone) return showToast("請填寫完整資料");
 
-  players.push({
-    id: Date.now(), name, gender: selectedGender, phone, lv: selectedLv,
-    adminScores: [], cancelCount: 0,
-    pay: document.getElementById('inp-pay').value,
-    note: document.getElementById('inp-note').value,
-    approved: true
-  });
-
-  // reset form
-  ['inp-name','inp-phone','inp-line','inp-note'].forEach(id => document.getElementById(id).value = '');
-  document.querySelectorAll('#lv18-signup .lv18-btn').forEach(b => { b.classList.remove('selected'); b.style.cssText = ''; b.className = 'lv18-btn'; });
-  document.getElementById('signup-lv-desc').classList.remove('show');
-  selectedLv = null; selectedGender = null;
-  document.getElementById('g-m').className = 'gender-opt';
-  document.getElementById('g-f').className = 'gender-opt';
-
-  updateCount();
-  showToast('✓ 報名成功！');
-  switchTab('roster');
+  // 將資料推送到 Firebase
+  db.ref('players').push({ name, phone, time: Date.now() })
+    .then(() => {
+      showToast("報名成功！");
+      document.getElementById('inp-name').value = "";
+      document.getElementById('inp-phone').value = "";
+      switchTab('roster');
+    })
+    .catch(error => {
+      showToast("發生錯誤，請確認資料庫讀寫權限是否有開！");
+      console.error(error);
+    });
 }
 
-/* ===========================
-   COUNT BAR
-=========================== */
-function updateCount() {
-  const n = players.length;
-  const max = 12;
-  document.getElementById('count').textContent = n;
-  document.getElementById('remain').textContent = Math.max(0, max - n);
-  const pct = Math.min(100, Math.round(n / max * 100));
-  const fill = document.getElementById('slots-fill');
-  fill.style.width = pct + '%';
-  fill.className = 'slots-fill' + (pct >= 100 ? ' full' : pct >= 75 ? ' almost' : '');
-  if (n >= max) {
-    document.getElementById('status-badge').textContent = '已額滿';
-    document.getElementById('status-badge').className = 'badge bg-red';
+// 儲存設定
+function saveSettings() {
+  const settings = {
+    title: document.getElementById('set-title').value,
+    venue: document.getElementById('set-venue').value,
+    date: document.getElementById('set-date').value,
+    time: document.getElementById('set-time').value,
+    feeM: document.getElementById('set-fee-m').value,
+    feeF: document.getElementById('set-fee-f').value,
+  };
+  db.ref('settings').set(settings).then(() => showToast("設定已同步到雲端！"));
+}
+
+// 清空名單
+function clearPlayers() {
+  if (confirm("確定要清空所有報名名單嗎？此動作無法復原。")) {
+    db.ref('players').remove().then(() => showToast("已清空名單"));
   }
 }
 
-/* ===========================
-   ROSTER
-=========================== */
-const AV = ['av-blue','av-pink','av-green','av-amber','av-purple','av-coral'];
-function avgScore(arr) { return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null; }
-
+// 渲染名單
 function renderRoster() {
-  const withCancel = players.filter(p => p.cancelCount > 0).length;
-  const withWarn   = players.filter(p => { const a = avgScore(p.adminScores); return a && Math.abs(a - p.lv) >= 2; }).length;
-  document.getElementById('s-total').textContent  = players.length;
-  document.getElementById('s-cancel').textContent = withCancel;
-  document.getElementById('s-warn').textContent   = withWarn;
-
-  document.getElementById('roster-list').innerHTML = players.map((p, i) => {
-    const aAvg = avgScore(p.adminScores);
-    const diff = aAvg ? Math.abs(aAvg - p.lv) : 0;
-    const warnHtml   = diff >= 2 ? `<span class="badge bg-red" style="font-size:10px">⚠ 落差 ${diff} 級</span>` : '';
-    const cancelHtml = p.cancelCount > 0 ? `<span class="cancel-count">取消 ${p.cancelCount} 次</span>` : '';
-    const lockHtml   = (p.cancelCount >= rules.limit && !p.approved) ? `<span class="badge bg-red" style="font-size:10px">待審核</span>` : '';
-    const adminHtml  = aAvg ? `<span class="badge lv${aAvg}" style="font-size:10px">建議 ${aAvg} 級</span>` : '';
-    const payIcon    = p.pay === 'linepay' ? '💚 Line Pay' : '💵 現金';
-    return `<div class="player-row">
-      <div class="avatar ${AV[i % AV.length]}">${p.name.charAt(0)}</div>
-      <div class="player-info">
-        <div class="player-name">${p.name} <span style="font-size:11px;color:var(--text3)">${p.gender==='f'?'女':'男'}</span> ${lockHtml}</div>
-        <div class="player-meta">
-          <span class="badge lv${p.lv}">第 ${p.lv} 級</span>
-          ${adminHtml}${warnHtml}${cancelHtml}
-          <span style="font-size:11px">${payIcon}</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-/* ===========================
-   ADMIN
-=========================== */
-function renderAdmin() {
-  renderAdminScore();
-  renderAdminCancel();
-}
-
-function renderAdminScore() {
-  document.getElementById('admin-score-list').innerHTML = players.map((p, i) => {
-    const aAvg = avgScore(p.adminScores);
-    const diff = aAvg ? Math.abs(aAvg - p.lv) : 0;
-    const diffHtml = diff >= 2
-      ? `<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--red-bg);color:var(--red)">自評 ${p.lv} 級 · 落差 ${diff} 級</span>`
-      : '';
-    const scoreHtml = aAvg
-      ? `<span class="badge lv${aAvg}">建議 ${aAvg} 級</span><span style="font-size:11px;color:var(--text3)">(${p.adminScores.length} 人評)</span>`
-      : `<span style="font-size:12px;color:var(--text3)">尚未評分</span>`;
-    return `<div class="player-row">
-      <div class="avatar ${AV[i % AV.length]}">${p.name.charAt(0)}</div>
-      <div class="player-info">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px">
-          <span class="player-name">${p.name}</span>
-          <span style="font-size:12px;color:var(--text2)">自評：<span class="badge lv${p.lv}" style="font-size:10px">第 ${p.lv} 級</span></span>
-          ${scoreHtml}
-        </div>
-        ${diffHtml}
-      </div>
-      <button class="action-btn star" onclick="openScoreModal(${p.id})">評分 ★</button>
-    </div>`;
-  }).join('');
-}
-
-function renderAdminCancel() {
-  document.getElementById('admin-cancel-list').innerHTML = players.map((p, i) => {
-    const dots = [...Array(Math.max(3, p.cancelCount))].map((_, n) =>
-      `<span style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:2px;background:${n < p.cancelCount ? '#E24B4A' : 'var(--surface2)'}"></span>`
-    ).join('');
-    return `<div class="player-row">
-      <div class="avatar ${AV[i % AV.length]}">${p.name.charAt(0)}</div>
-      <div class="player-info">
-        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
-          <span class="player-name">${p.name}</span>
-          <span style="font-size:12px;color:var(--text2)">取消 ${p.cancelCount} 次</span>
-          <div>${dots}</div>
-          ${p.cancelCount >= rules.limit ? `<span class="badge bg-red" style="font-size:10px">鎖定</span>` : ''}
-        </div>
-      </div>
-      <div style="display:flex;gap:5px;flex-shrink:0">
-        <button class="action-btn danger" onclick="openCancelModal(${p.id})">記錄</button>
-        ${p.cancelCount >= rules.limit ? `<button class="action-btn primary" onclick="toggleApprove(${p.id})">${p.approved ? '撤銷' : '核准'}</button>` : ''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-/* ===========================
-   SAVE SETTINGS
-=========================== */
-function saveVenue() {
-  document.getElementById('disp-title').textContent  = document.getElementById('set-title').value;
-  document.getElementById('disp-venue').textContent  = document.getElementById('set-venue').value;
-  document.getElementById('disp-court').textContent  = document.getElementById('set-court').value;
-  document.getElementById('disp-addr').textContent   = document.getElementById('set-addr').value;
-  document.getElementById('disp-date').textContent   = document.getElementById('set-date').value;
-  document.getElementById('disp-time').textContent   = document.getElementById('set-time').value;
-  document.getElementById('disp-fee-m').textContent  = document.getElementById('set-fee-m').value;
-  document.getElementById('disp-fee-f').textContent  = document.getElementById('set-fee-f').value;
-  document.getElementById('hero-team-name').textContent = document.getElementById('set-team-name').value;
-
-  const lvMin = document.getElementById('set-lv-min').value;
-  const lvMax = document.getElementById('set-lv-max').value;
-  document.getElementById('disp-req').innerHTML =
-    `<span class="badge lv${lvMin}">第 ${lvMin} 級</span>
-     <span style="font-size:12px;color:var(--text3)">至</span>
-     <span class="badge lv${lvMax}">第 ${lvMax} 級</span>
-     <span class="badge bg-gray">其他程度請私訊</span>`;
-
-  const pm = document.getElementById('set-pay-method').value;
-  let payHtml = '';
-  if (pm === 'both' || pm === 'cash')    payHtml += `<div class="pay-chip">💵 現金（現場繳交）</div>`;
-  if (pm === 'both' || pm === 'linepay') payHtml += `<div class="pay-chip">💚 Line Pay（掃碼付款）</div>`;
-  document.getElementById('disp-pay').innerHTML = payHtml;
-
-  showToast('✓ 基本設定已儲存');
-}
-
-function saveRules() {
-  rules.hours = parseInt(document.getElementById('rule-hours').value) || 24;
-  rules.unit  = document.getElementById('rule-unit').value;
-  rules.limit = parseInt(document.getElementById('rule-limit').value) || 3;
-  const ul = rules.unit === 'hour' ? '小時' : '天';
-  document.getElementById('disp-cancel-rule').innerHTML = `取消需提前 <strong>${rules.hours} ${ul}</strong>`;
-  showToast('✓ 取消規則已儲存');
-}
-
-/* ===========================
-   SCORE MODAL
-=========================== */
-function openScoreModal(id) {
-  scoreTarget = id; scoreModalLv = null;
-  const p = players.find(x => x.id === id);
-  document.getElementById('score-modal-name').textContent = p.name;
-  document.getElementById('score-modal-self').innerHTML = `<span class="badge lv${p.lv}" style="font-size:11px">第 ${p.lv} 級</span>`;
-  buildLv18Picker('lv18-score-modal', null);
-  document.getElementById('score-modal').classList.add('open');
-}
-
-function confirmScore() {
-  if (!scoreModalLv) { showToast('請選擇級數'); return; }
-  const p = players.find(x => x.id === scoreTarget);
-  if (p) p.adminScores.push(scoreModalLv);
-  closeModal('score-modal');
-  renderAdmin(); renderRoster();
-  showToast('✓ 評分已記錄（匿名）');
-}
-
-/* ===========================
-   CANCEL MODAL
-=========================== */
-function openCancelModal(id) {
-  cancelTarget = id;
-  const p = players.find(x => x.id === id);
-  document.getElementById('cancel-modal-name').textContent = '球員：' + p.name;
-  document.getElementById('cancel-note').value = '';
-  document.getElementById('cancel-modal').classList.add('open');
-}
-
-function confirmCancel() {
-  const p = players.find(x => x.id === cancelTarget);
-  if (p) { p.cancelCount++; if (p.cancelCount >= rules.limit) p.approved = false; }
-  closeModal('cancel-modal');
-  renderAdmin(); renderRoster();
-  showToast('✓ 取消紀錄已新增');
-}
-
-function toggleApprove(id) {
-  const p = players.find(x => x.id === id);
-  if (p) { p.approved = !p.approved; renderAdmin(); showToast(p.approved ? '✓ 已核准報名' : '已撤銷核准'); }
-}
-
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-}
-
-/* ===========================
-   RATE PAGE
-=========================== */
-const RATE_CATS = [
-  {key:'org',   label:'活動組織'},
-  {key:'comm',  label:'溝通清晰度'},
-  {key:'venue', label:'場地品質'},
-  {key:'atmo',  label:'球局氣氛'},
-  {key:'fair',  label:'分組公平性'},
-];
-let rateVals = {};
-
-function renderRatePage() {
-  if (hasRated) {
-    document.getElementById('team-rate-form').innerHTML =
-      `<div style="text-align:center;padding:1.5rem;color:var(--text3);font-size:13px">✓ 評分已送出，感謝你的匿名回饋！</div>`;
-  } else {
-    rateVals = {};
-    let html = RATE_CATS.map(cat => `
-      <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
-        <div style="min-width:80px;font-size:13px;font-weight:500">${cat.label}</div>
-        <div id="tsr-${cat.key}" style="display:flex;gap:2px">
-          ${[1,2,3,4,5].map(s => `<span class="star-item" onclick="setTeamStar('${cat.key}',${s})">★</span>`).join('')}
-        </div>
-        <span style="font-size:12px;color:var(--text3);min-width:16px" id="tsv-${cat.key}">-</span>
-      </div>`).join('');
-    html += `<button class="submit-btn" style="margin-top:1rem" onclick="submitTeamRate()">送出評分（匿名）→</button>`;
-    document.getElementById('team-rate-form').innerHTML = html;
+  const list = document.getElementById('roster-list');
+  if (players.length === 0) {
+    list.innerHTML = "<div style='text-align:center; color:gray; padding: 20px;'>目前尚無人報名</div>";
+    return;
   }
-  renderTeamRateResult();
-  renderAdminFeedback();
-}
-
-function setTeamStar(key, val) {
-  rateVals[key] = val;
-  const row = document.getElementById('tsr-' + key);
-  if (!row) return;
-  row.querySelectorAll('.star-item').forEach((s, i) => s.classList.toggle('on', i < val));
-  document.getElementById('tsv-' + key).textContent = val;
-}
-
-function submitTeamRate() {
-  const vals = RATE_CATS.map(c => rateVals[c.key] || 0);
-  if (vals.some(v => !v)) { showToast('請完成所有項目評分'); return; }
-  const avg = vals.reduce((a,b) => a+b, 0) / vals.length;
-  teamRating.sum += avg; teamRating.count++;
-  hasRated = true;
-  renderRatePage();
-  showToast('✓ 評分送出！感謝回饋');
-}
-
-function renderTeamRateResult() {
-  const avg = teamRating.count ? teamRating.sum / teamRating.count : 4.2;
-  const filled = Math.round(avg);
-  const stars = [1,2,3,4,5].map(s =>
-    `<span style="font-size:20px;color:${s<=filled?'#EF9F27':'var(--border2)'}">${s<=filled?'★':'☆'}</span>`
-  ).join('');
-  document.getElementById('team-rate-result').innerHTML = `
-    <div style="display:flex;align-items:center;gap:12px;padding:.5rem 0">
-      <div>${stars}</div>
-      <div style="font-size:22px;font-weight:700">${avg.toFixed(1)}</div>
-      <div style="font-size:12px;color:var(--text3)">${teamRating.count} 人評分</div>
+  list.innerHTML = players.map((p) => `
+    <div class="player-row">
+      <div class="avatar">${p.name[0]}</div>
+      <div style="flex:1">
+        <div style="font-weight:700">${p.name}</div>
+        <div style="font-size:12px;color:var(--text3)">${p.phone}</div>
+      </div>
+      ${isAdmin ? `<button onclick="deletePlayer('${p.fbKey}')" style="color:#A32D2D; border:1px solid #A32D2D; border-radius:4px; padding:4px 8px; background:none; cursor:pointer">刪除</button>` : ''}
     </div>
-    <div style="font-size:12px;color:var(--text3)">球員對本球團的匿名綜合評分</div>`;
+  `).join('');
 }
 
-function renderAdminFeedback() {
-  const el = document.getElementById('admin-feedback-detail');
-  if (!el) return;
-  const mockData = [
-    {label:'活動組織', avg:4.5}, {label:'溝通清晰度', avg:4.2},
-    {label:'場地品質', avg:4.7}, {label:'球局氣氛', avg:4.8},
-    {label:'分組公平性', avg:3.9},
-  ];
-  el.innerHTML = mockData.map(d => {
-    const f = Math.round(d.avg);
-    const bars = `<div style="display:flex;gap:2px">${[1,2,3,4,5].map(s=>`<span style="font-size:16px;color:${s<=f?'#EF9F27':'var(--border2)'}">${s<=f?'★':'☆'}</span>`).join('')}</div>`;
-    return `<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)">
-      <div style="min-width:80px;font-size:13px">${d.label}</div>
-      ${bars}
-      <span style="font-size:13px;font-weight:700">${d.avg.toFixed(1)}</span>
-    </div>`;
-  }).join('');
+function deletePlayer(key) {
+    if(confirm("確定要刪除這位球員嗎？")) db.ref('players').child(key).remove();
 }
 
-/* ===========================
-   TOAST
-=========================== */
+function updateCount() {
+  const count = players.length;
+  document.getElementById('count').textContent = count;
+  const pct = Math.min(100, (count / 12) * 100);
+  document.getElementById('slots-fill').style.width = pct + "%";
+  
+  if(count >= 12) {
+      document.getElementById('status-badge').textContent = '已額滿';
+      document.getElementById('status-badge').className = 'badge bg-red';
+  } else {
+      document.getElementById('status-badge').textContent = '報名中';
+      document.getElementById('status-badge').className = 'badge bg-green';
+  }
+}
+
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.getAttribute('onclick').includes(id)));
+  document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === 'sec-' + id));
+}
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
+  setTimeout(() => t.classList.remove('show'), 2000);
 }
-
-/* ===========================
-   INIT
-=========================== */
-buildLv18Picker('lv18-signup', null);
-buildLvSelects();
 </script>
 </body>
 </html>
