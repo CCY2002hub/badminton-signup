@@ -60,6 +60,14 @@ label { font-size: 12px; color: var(--neon-green); margin-bottom: 5px; display: 
 .game-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-left-color: #fff; background: rgba(23,42,69,0.8); }
 .game-card:hover::after { opacity: 0.2; transform: rotate(-15deg) scale(1.1); }
 
+/* 摺疊選單樣式 */
+.collapsible-header { display: flex; justify-content: space-between; align-items: center; background: rgba(100,255,218,0.05); border: 1px solid rgba(100,255,218,0.2); padding: 12px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 10px; transition: all 0.2s; }
+.collapsible-header:hover { background: rgba(100,255,218,0.1); box-shadow: 0 0 15px rgba(100,255,218,0.1); }
+.collapsible-content { display: none; margin-bottom: 30px; }
+.collapsible-content.open { display: grid; gap: 15px; animation: fadeIn 0.3s; }
+.arrow-icon { transition: transform 0.3s; color: var(--neon-green); font-size: 12px; }
+.arrow-icon.open { transform: rotate(180deg); }
+
 /* 名單與標籤 */
 .badge { font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: bold; background: rgba(100,255,218,0.1); color: var(--neon-green); border: 1px solid var(--neon-green); }
 .player-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
@@ -113,10 +121,15 @@ label { font-size: 12px; color: var(--neon-green); margin-bottom: 5px; display: 
     <button class="btn-primary" style="width:auto; margin:0; padding:8px 20px;" onclick="createNewGroup()">➕ 創建新球局</button>
   </div>
   
-  <h3 style="color:var(--text-main); margin-bottom:10px; font-size:16px;">👑 我管理的球局</h3>
-  <div id="my-games-list" style="display: grid; gap: 15px; margin-bottom: 30px;"></div>
+  <div class="collapsible-header" onclick="toggleMyGames()">
+    <h3 style="color:var(--text-main); font-size:16px; margin:0; display:flex; align-items:center; gap:8px;">
+      👑 我管理的球局 <span id="my-games-count" style="font-size:13px; color:var(--text-dim); font-weight:normal;">(0)</span>
+    </h3>
+    <span id="my-games-arrow" class="arrow-icon">▼</span>
+  </div>
+  <div id="my-games-list" class="collapsible-content"></div>
 
-  <h3 style="color:var(--text-dim); margin-bottom:10px; font-size:16px;">🏸 其他開放球局</h3>
+  <h3 style="color:var(--text-dim); margin-bottom:10px; margin-top:20px; font-size:16px;">🏸 其他開放球局</h3>
   <div id="other-games-list" style="display: grid; gap: 15px;"></div>
 </div>
 
@@ -132,7 +145,7 @@ label { font-size: 12px; color: var(--neon-green); margin-bottom: 5px; display: 
   <div id="sec-game" class="section active">
     <div class="card">
       <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid var(--border); padding-bottom:10px;">
-        <h2 id="disp-title" style="color:var(--text-main);">載入中...</h2>
+        <h2 id="disp-title" style="color:var(--text-main); margin:0;">載入中...</h2>
         <span class="badge">報名中</span>
       </div>
       <p style="color:var(--neon-green); font-size:12px;">📍 地點： <span id="disp-venue" style="color:var(--text-main); font-size:15px;">-</span></p>
@@ -235,20 +248,22 @@ auth.onAuthStateChanged((user) => {
 function signInWithGoogle() { auth.signInWithPopup(provider).catch(err => showToast("登入失敗")); }
 function signOut() { auth.signOut().then(() => { window.location.href = window.location.pathname; }); }
 
-/* --- 大廳邏輯 (多球團分類) --- */
+/* --- 大廳邏輯 (多球團分類與摺疊) --- */
 function loadLobbyGames() {
   db.ref('groups').on('value', (snapshot) => {
     const data = snapshot.val();
     const myList = document.getElementById('my-games-list');
     const otherList = document.getElementById('other-games-list');
+    const countSpan = document.getElementById('my-games-count');
     
     if (!data) {
       myList.innerHTML = `<div style="color:var(--text-dim); padding:10px;">目前尚無管理的球局</div>`;
       otherList.innerHTML = `<div style="color:var(--text-dim); padding:10px;">目前尚無開放的球局</div>`;
+      countSpan.textContent = "(0)";
       return;
     }
     
-    let myHtml = ""; let otherHtml = "";
+    let myHtml = ""; let otherHtml = ""; let myCount = 0;
     const groupsArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse();
     
     groupsArray.forEach(group => {
@@ -256,23 +271,28 @@ function loadLobbyGames() {
       if (settings) {
         const playerCount = group.players ? Object.keys(group.players).length : 0;
         const cardHtml = `
-          <div class="card game-card" onclick="window.location.href='?id=${group.id}'">
+          <div class="card game-card" onclick="window.location.href='?id=${group.id}'" style="margin-bottom:0;">
             <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
-              <h3 style="color:var(--text-main); font-size:16px;">${settings.title}</h3>
+              <h3 style="color:var(--text-main); font-size:16px; margin:0;">${settings.title}</h3>
               <span class="badge">${playerCount} 人</span>
             </div>
             <div style="font-size:13px; color:var(--text-dim);">📍 ${settings.venue} | 📅 ${settings.date} ${settings.time}</div>
           </div>`;
           
-        // 判斷這局是不是當前登入者創的
-        if(settings.ownerUid === currentUser.uid) { myHtml += cardHtml; } 
+        if(settings.ownerUid === currentUser.uid) { myHtml += cardHtml; myCount++; } 
         else { otherHtml += cardHtml; }
       }
     });
     
+    countSpan.textContent = `(${myCount})`;
     myList.innerHTML = myHtml || `<div style="color:var(--text-dim); padding:10px;">目前尚無管理的球局，點擊右上角創建！</div>`;
     otherList.innerHTML = otherHtml || `<div style="color:var(--text-dim); padding:10px;">目前沒有其他人開放的球局。</div>`;
   });
+}
+
+function toggleMyGames() {
+  document.getElementById('my-games-list').classList.toggle('open');
+  document.getElementById('my-games-arrow').classList.toggle('open');
 }
 
 function createNewGroup() {
