@@ -6,56 +6,44 @@
 <title>羽球揪團佈告欄 - Ocean Professional Elite</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ===== 酷藍深海視覺與粒子設定 ===== */
+/* ===== 基礎視覺設定 ===== */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   color-scheme: dark;
   --bg-deep: #020c1b; --bg-dark: #0a192f; --text-main: #e6f1ff; --text-dim: #ccd6f6;
-  --neon-green: #64ffda; --neon-red: #ff5e5e; --neon-blue: #007bff;
+  --neon-green: #64ffda; --neon-red: #ff5e5e; --neon-blue: #007bff; --neon-orange: #ffaa33;
   --glass: rgba(17, 34, 64, 0.6); --glass-header: rgba(10, 25, 47, 0.8);
   --border: rgba(100, 255, 218, 0.1); --radius: 12px;
 }
 body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-deep); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
 body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #020c1b 0%, #0a192f 50%, #172a45 100%); z-index: -2; }
-.particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-.p-shuttle { position: absolute; font-size: 30px; color: rgba(100,255,218,0.1); animation: floatUp linear infinite; opacity: 0; }
-@keyframes floatUp { 0% { transform: translateY(110vh) rotate(0deg); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; } }
-.p-shuttle:nth-child(1) { left: 15%; animation-duration: 20s; }
-.p-shuttle:nth-child(2) { left: 75%; animation-duration: 25s; animation-delay: 4s; }
 
 /* UI 元件 */
 .header { background: var(--glass-header); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 0 1.5rem; position: sticky; top: 0; z-index: 40; }
 .header-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
 .logo { font-size: 18px; font-weight: 700; color: var(--neon-green); text-decoration: none; }
 .container { max-width: 960px; margin: 0 auto; padding: 2rem 1rem 5rem; }
-.card { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; transition: 0.3s; }
-.card-title { font-size: 16px; font-weight: 700; color: var(--text-dim); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 1rem; }
+.card { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
 
-/* 按鈕與輸入 */
-.btn-primary { width: 100%; padding: 12px; background: transparent; color: var(--neon-green); border: 1px solid var(--neon-green); border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; }
-.btn-primary:hover { background: rgba(100,255,218,0.1); box-shadow: 0 0 15px rgba(100,255,218,0.2); }
+/* 按鈕與標籤 */
+.btn-primary { width: 100%; padding: 12px; background: transparent; color: var(--neon-green); border: 1px solid var(--neon-green); border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+.btn-primary:hover { background: rgba(100,255,218,0.1); }
 input, select, textarea { width: 100%; padding: 11px 15px; background: rgba(2,12,27,0.3); border: 1px solid var(--border); border-radius: 8px; color: var(--text-main); margin-bottom: 1rem; font-family: inherit; }
 label { font-size: 12px; color: var(--neon-green); margin-bottom: 5px; display: block; }
-
-/* 大廳球局排版 */
-.weekday-divider { color: var(--neon-green); font-size: 14px; font-weight: bold; margin: 25px 0 10px; padding-left: 5px; border-left: 3px solid var(--neon-green); letter-spacing: 1px; }
-.game-card { cursor: pointer; border-left: 4px solid var(--neon-green); transition: 0.3s; margin-bottom: 10px; }
-.game-card:hover { transform: translateY(-3px); background: rgba(23,42,69,0.8); border-left-color: #fff; }
-
-/* 摺疊選單 */
-.collapsible-header { display: flex; justify-content: space-between; align-items: center; background: rgba(100,255,218,0.05); border: 1px solid rgba(100,255,218,0.2); padding: 12px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 10px; }
-.collapsible-content { display: none; margin-bottom: 20px; }
-.collapsible-content.open { display: grid; }
-
-/* 其他樣式 */
 .badge { font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: bold; background: rgba(100,255,218,0.1); color: var(--neon-green); border: 1px solid var(--neon-green); }
-.player-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
-.avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(100,255,218,0.1); border: 1px solid rgba(100,255,218,0.3); overflow: hidden; }
-.avatar img { width: 100%; height: 100%; object-fit: cover; }
-.tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
-.tab { padding: 12px 18px; font-size: 13px; color: var(--text-dim); cursor: pointer; background: none; border: none; border-bottom: 2px solid transparent; }
-.tab.active { color: var(--neon-green); border-bottom-color: var(--neon-green); }
 
+/* 管理清單子標題 */
+.sub-list-title { font-size: 13px; color: var(--text-dim); margin: 15px 0 8px; display: flex; align-items: center; gap: 8px; opacity: 0.8; }
+.sub-list-title::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+/* 球局卡片樣式 */
+.game-card { cursor: pointer; border-left: 4px solid var(--neon-green); transition: 0.3s; margin-bottom: 10px; }
+.game-card.draft { border-left-color: var(--neon-orange); }
+.game-card:hover { transform: translateY(-3px); background: rgba(23,42,69,0.8); }
+
+.weekday-divider { color: var(--neon-green); font-size: 14px; font-weight: bold; margin: 25px 0 10px; padding-left: 5px; border-left: 3px solid var(--neon-green); }
+
+/* 佈局切換 */
 .section, #login-screen, #lobby-screen, #room-screen { display: none; }
 .section.active { display: block; animation: fadeIn 0.3s; }
 .admin-only { display: none !important; }
@@ -68,14 +56,12 @@ label { font-size: 12px; color: var(--neon-green); margin-bottom: 5px; display: 
 </head>
 <body>
 
-<div class="particles"><div class="p-shuttle">🏸</div><div class="p-shuttle">🏸</div></div>
-
 <header class="header">
   <div class="header-inner">
     <a href="?" class="logo">🏸 羽球揪團佈告欄</a>
     <div style="display:flex; align-items:center; gap:12px;">
       <span id="user-display-name" style="font-size:12px; color:var(--text-dim);"></span>
-      <button class="btn-outline" style="font-size:11px; padding:4px 10px; background:none; color:var(--text-dim); border:1px solid var(--border); border-radius:15px; cursor:pointer;" onclick="signOut()">登出</button>
+      <button style="font-size:11px; padding:4px 10px; background:none; color:var(--text-dim); border:1px solid var(--border); border-radius:15px; cursor:pointer;" onclick="signOut()">登出</button>
     </div>
   </div>
 </header>
@@ -95,13 +81,19 @@ label { font-size: 12px; color: var(--neon-green); margin-bottom: 5px; display: 
     <button id="apply-btn" class="btn-outline" style="font-size:12px; padding:8px 15px; border:1px solid var(--neon-green); color:var(--neon-green); background:none; border-radius:8px; cursor:pointer;" onclick="applyForHost()">申請成為團主</button>
   </div>
   
-  <div class="collapsible-header" onclick="toggleMyGames()">
-    <h3 style="font-size:16px; margin:0;">👑 我管理的球局 <span id="my-games-count" style="font-size:12px;">(0)</span></h3>
-    <span id="my-games-arrow">▼</span>
+  <div class="card" style="padding: 10px; background: rgba(100, 255, 218, 0.03);">
+    <h3 style="font-size:15px; margin: 10px;">👑 我管理的球局</h3>
+    <div id="my-draft-section">
+      <div class="sub-list-title">⚠️ 待完成草稿 (未公開)</div>
+      <div id="my-draft-list"></div>
+    </div>
+    <div id="my-active-section">
+      <div class="sub-list-title">✅ 已公開發佈</div>
+      <div id="my-active-list"></div>
+    </div>
   </div>
-  <div id="my-games-list" class="collapsible-content"></div>
 
-  <h3 style="color:var(--text-dim); margin-bottom:10px; margin-top:20px; font-size:16px;">🏸 其他開放球局</h3>
+  <h3 style="color:var(--text-dim); margin-bottom:10px; margin-top:30px; font-size:16px;">🏸 其他開放球局</h3>
   <div id="other-games-container">
     <div id="other-games-loader" style="color:var(--text-dim); text-align:center; padding:20px;">載入球局中...</div>
   </div>
@@ -114,40 +106,48 @@ label { font-size: 12px; color: var(--neon-green); margin-bottom: 5px; display: 
 </div>
 
 <div id="room-screen" class="container">
-  <div style="margin-bottom:15px;"><button class="btn-outline" style="background:none; color:var(--text-dim); border:none; cursor:pointer;" onclick="window.location.href='?'">🔙 回到佈告欄</button></div>
+  <div style="margin-bottom:15px;"><button style="background:none; color:var(--text-dim); border:none; cursor:pointer;" onclick="window.location.href='?'">🔙 回到佈告欄</button></div>
   <div class="tabs">
     <button class="tab active" onclick="switchTab('game')">球局資訊</button>
     <button class="tab" onclick="switchTab('signup')">報名臨打</button>
     <button class="tab" onclick="switchTab('roster')">報名名單</button>
-    <button class="tab admin-only" onclick="switchTab('admin')">⚙️ 團主設定</button>
+    <button class="tab admin-only" onclick="switchTab('admin')">⚙️ 設定</button>
   </div>
 
   <div id="sec-game" class="section active">
     <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px; border-bottom:1px solid var(--border); padding-bottom:10px;">
-        <h2 style="color:var(--text-main); margin:0;">📍 <span id="disp-venue">載入中...</span></h2>
-        <span class="badge">報名中</span>
-      </div>
-      <p style="color:var(--neon-green); font-size:12px;">📅 時間： <span id="disp-date" style="color:var(--text-main); font-size:15px;">-</span> <span id="disp-time" style="color:var(--text-main); font-size:15px;">-</span></p>
-      <div style="display:flex; gap:10px; margin-top:15px;">
-        <div style="flex:1; background:rgba(24,95,165,0.1); padding:10px; border-radius:8px; color:var(--neon-blue);">♂ 男生 <b id="disp-fee-m">-</b></div>
-        <div style="flex:1; background:rgba(237,147,177,0.1); padding:10px; border-radius:8px; color:#ed93b1;">♀ 女生 <b id="disp-fee-f">-</b></div>
-      </div>
-      <div id="note-box" style="margin-top:20px; padding:15px; background:rgba(100,255,218,0.05); border-radius:8px; display:none;">
-        <div style="font-size:11px; color:var(--neon-green); margin-bottom:5px;">📝 團主備註</div>
-        <div id="disp-note" style="font-size:14px; white-space:pre-wrap;"></div>
-      </div>
+        <h2 id="disp-venue" style="color:var(--text-main); margin-bottom:10px;">📍 載入中...</h2>
+        <p style="color:var(--neon-green); font-size:14px;">📅 <span id="disp-date"></span> <span id="disp-time"></span></p>
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <div style="flex:1; background:rgba(24,95,165,0.1); padding:10px; border-radius:8px;">♂ 男 <b id="disp-fee-m"></b></div>
+            <div style="flex:1; background:rgba(237,147,177,0.1); padding:10px; border-radius:8px;">♀ 女 <b id="disp-fee-f"></b></div>
+        </div>
+        <div id="note-box" style="margin-top:20px; padding:15px; background:rgba(100,255,218,0.05); border-radius:8px; display:none;">
+            <div style="font-size:11px; color:var(--neon-green);">📝 團主備註</div>
+            <div id="disp-note" style="font-size:14px; white-space:pre-wrap;"></div>
+        </div>
     </div>
   </div>
 
   <div id="sec-signup" class="section">
-    <div class="card"><div class="card-title">報名資料</div><label>姓名</label><input type="text" id="inp-name" readonly><label>聯絡電話</label><input type="tel" id="inp-phone" onfocus="this.select()"><button class="btn-primary" onclick="doSignup()">確認報名</button></div>
+    <div class="card"><label>姓名</label><input type="text" id="inp-name" readonly><label>聯絡電話</label><input type="tel" id="inp-phone" onfocus="this.select()"><button class="btn-primary" onclick="doSignup()">確認報名</button></div>
   </div>
+
   <div id="sec-roster" class="section">
-    <div class="card"><div style="display:flex;justify-content:space-between; margin-bottom:15px;"><span class="card-title" style="border:none; margin:0;">報名名單</span><span id="count" class="badge">0</span></div><div id="roster-list"></div></div>
+    <div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span class="card-title" style="border:none;">報名名單</span><span id="count" class="badge">0</span></div><div id="roster-list"></div></div>
   </div>
+
   <div id="sec-admin" class="section admin-only">
-    <div class="card"><div class="card-title">球局管理</div><label>球館名稱</label><input type="text" id="set-venue" onfocus="this.select()"><label>打球日</label><select id="set-date"><option value="">請選擇...</option><option value="每週一">每週一</option><option value="每週二">每週二</option><option value="每週三">每週三</option><option value="每週四">每週四</option><option value="每週五">每週五</option><option value="每週六">每週六</option><option value="每週日">每週日</option></select><label>時間</label><input type="time" id="set-time"><label>男生費用</label><input type="text" id="set-fee-m" onfocus="this.select()"><label>女生費用</label><input type="text" id="set-fee-f" onfocus="this.select()"><label>備註</label><textarea id="set-note"></textarea><button class="btn-primary" onclick="saveSettings()">儲存設定</button><button class="btn-primary" onclick="deleteGroup()" style="color:var(--neon-red); border-color:var(--neon-red); margin-top:30px;">🗑️ 刪除球局</button></div>
+    <div class="card">
+        <label>球館名稱</label><input type="text" id="set-venue">
+        <label>打球日</label><select id="set-date"><option value="">請選擇...</option><option value="每週一">每週一</option><option value="每週二">每週二</option><option value="每週三">每週三</option><option value="每週四">每週四</option><option value="每週五">每週五</option><option value="每週六">每週六</option><option value="每週日">每週日</option></select>
+        <label>時間</label><input type="time" id="set-time">
+        <label>男生費用</label><input type="text" id="set-fee-m">
+        <label>女生費用</label><input type="text" id="set-fee-f">
+        <label>備註</label><textarea id="set-note"></textarea>
+        <button class="btn-primary" onclick="saveSettings()">儲存設定</button>
+        <button class="btn-primary" onclick="deleteGroup()" style="color:var(--neon-red); border-color:var(--neon-red); margin-top:30px;">🗑️ 刪除球局</button>
+    </div>
   </div>
 </div>
 
@@ -183,6 +183,7 @@ auth.onAuthStateChanged((user) => {
   if (user) {
     currentUser = user;
     document.getElementById('user-display-name').textContent = "Hi, " + user.displayName;
+    document.getElementById('inp-name').value = user.displayName;
     checkHostStatus(user.uid);
     if (!groupId) {
       document.getElementById('lobby-screen').style.display = 'block';
@@ -215,17 +216,16 @@ function checkHostStatus(uid) {
 function loadLobbyGames() {
   db.ref('groups').on('value', (snapshot) => {
     const data = snapshot.val();
-    const myList = document.getElementById('my-games-list');
+    const draftList = document.getElementById('my-draft-list');
+    const activeList = document.getElementById('my-active-list');
     const container = document.getElementById('other-games-container');
     
     if (!data) {
-      myList.innerHTML = `<div style="color:var(--text-dim); padding:10px;">目前尚無球局</div>`;
-      container.innerHTML = `<div style="color:var(--text-dim); padding:10px;">佈告欄目前空空如也</div>`;
+      draftList.innerHTML = activeList.innerHTML = container.innerHTML = `<div style="color:var(--text-dim); padding:10px;">目前尚無球局</div>`;
       return;
     }
 
-    let myHtml = "";
-    let myCount = 0;
+    let draftHtml = ""; let myActiveHtml = "";
     const weekDays = ["每週一", "每週二", "每週三", "每週四", "每週五", "每週六", "每週日"];
     const classifiedGames = { "每週一": [], "每週二": [], "每週三": [], "每週四": [], "每週五": [], "每週六": [], "每週日": [], "未分類": [] };
 
@@ -234,34 +234,33 @@ function loadLobbyGames() {
     groupsArray.forEach(group => {
       const s = group.settings;
       const count = group.players ? Object.keys(group.players).length : 0;
+      const isComplete = (s.venue && s.date); // 判斷是否完整填寫
+
       const card = `
-        <div class="card game-card" onclick="window.location.href='?id=${group.id}'">
+        <div class="card game-card ${!isComplete ? 'draft' : ''}" onclick="window.location.href='?id=${group.id}'" style="margin-bottom:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-weight:bold;">📍 ${s.venue || "未命名球局"}</span>
+            <span style="font-weight:bold;">${!isComplete ? '📙' : '📍'} ${s.venue || "未命名球局"}</span>
             <span class="badge">${count} 人</span>
           </div>
-          <div style="font-size:12px; color:var(--text-dim); margin-top:5px;">🕒 ${s.date || ""} ${s.time || ""}</div>
+          <div style="font-size:12px; color:var(--text-dim); margin-top:5px;">🕒 ${s.date || "(未設打球日)"} ${s.time || ""}</div>
         </div>`;
 
-      // 1. 如果是自己的，一律放進「我管理的球局」（包含還沒填好的）
+      // 如果是我管理的
       if (s.ownerUid === currentUser.uid) {
-        myHtml += card;
-        myCount++;
+        if (isComplete) myActiveHtml += card;
+        else draftHtml += card;
       }
 
-      // 2. 如果是別人的，必須「已填寫球館名稱」且「已選擇星期幾」才會出現在佈告欄
-      if (s.ownerUid !== currentUser.uid && s.venue && s.date) {
-        const day = s.date || "未分類";
-        if (classifiedGames[day]) classifiedGames[day].push(card);
-        else classifiedGames["未分類"].push(card);
+      // 如果是別人的且已發佈
+      if (s.ownerUid !== currentUser.uid && isComplete) {
+        classifiedGames[s.date].push(card);
       }
     });
 
-    // 渲染管理區
-    document.getElementById('my-games-count').textContent = `(${myCount})`;
-    myList.innerHTML = myHtml || `<div style="color:var(--text-dim); padding:10px;">尚未創立球局</div>`;
+    draftList.innerHTML = draftHtml || `<div style="color:var(--text-dim); padding:10px; font-size:12px;">無草稿</div>`;
+    activeList.innerHTML = myActiveHtml || `<div style="color:var(--text-dim); padding:10px; font-size:12px;">無已發佈球局</div>`;
 
-    // 渲染佈告欄區（按星期排序）
+    // 渲染佈告欄
     let otherHtml = "";
     weekDays.forEach(day => {
       if (classifiedGames[day].length > 0) {
@@ -269,8 +268,7 @@ function loadLobbyGames() {
         classifiedGames[day].forEach(gameCard => otherHtml += gameCard);
       }
     });
-    
-    container.innerHTML = otherHtml || `<div style="color:var(--text-dim); padding:10px;">目前尚無完全設定好的開放球局</div>`;
+    container.innerHTML = otherHtml || `<div style="color:var(--text-dim); padding:10px;">目前尚無開放球局</div>`;
   });
 }
 
@@ -280,20 +278,72 @@ function createNewGroup() {
     .then(() => window.location.href = window.location.pathname + "?id=" + newId);
 }
 
-// 剩餘邏輯 (loadRoomData, doSignup, saveSettings, deleteGroup, applyForHost, sendFeedback, toggleMyGames, switchTab, showToast, renderRoster) 完全保留不變...
-// [此處省略重複的基礎邏輯以確保不超出長度限制]
-function loadRoomData(id){db.ref('groups/'+id+'/settings').on('value',(s)=>{const st=s.val();if(st){if(st.ownerUid===currentUser.uid){isAdmin=true;document.body.classList.add('is-admin')}document.getElementById('disp-venue').textContent=st.venue||"尚未設定";document.getElementById('disp-date').textContent=st.date||"-";document.getElementById('disp-time').textContent=st.time||"-";document.getElementById('disp-fee-m').textContent=st.feeM||"-";document.getElementById('disp-fee-f').textContent=st.feeF||"-";if(st.note){document.getElementById('note-box').style.display='block';document.getElementById('disp-note').textContent=st.note}else{document.getElementById('note-box').style.display='none'}if(isAdmin){document.getElementById('set-venue').value=st.venue||"";document.getElementById('set-date').value=st.date||"";document.getElementById('set-time').value=st.time||"";document.getElementById('set-fee-m').value=st.feeM||"";document.getElementById('set-fee-f').value=st.feeF||"";document.getElementById('set-note').value=st.note||""}}});db.ref('groups/'+id+'/players').on('value',(s)=>{const d=s.val();players=d?Object.keys(d).map(k=>({...d[k],fbKey:k})):[];renderRoster();document.getElementById('count').textContent=players.length})}
-function doSignup(){const ph=document.getElementById('inp-phone').value.trim();if(!ph)return showToast("請填電話");if(players.some(p=>p.uid===currentUser.uid))return showToast("已報名");db.ref('groups/'+groupId+'/players').push({uid:currentUser.uid,name:currentUser.displayName,photoURL:currentUser.photoURL,phone:ph,time:Date.now()}).then(()=>{showToast("報名成功");switchTab('roster')})}
-function saveSettings(){db.ref('groups/'+groupId+'/settings').update({venue:document.getElementById('set-venue').value,date:document.getElementById('set-date').value,time:document.getElementById('set-time').value,feeM:document.getElementById('set-fee-m').value,feeF:document.getElementById('set-fee-f').value,note:document.getElementById('set-note').value}).then(()=>showToast("儲存成功"))}
-function deleteGroup(){if(confirm("確定刪除？"))db.ref('groups/'+groupId).remove().then(()=>window.location.href=window.location.pathname)}
-function clearPlayers(){if(confirm("清空名單？"))db.ref('groups/'+groupId+'/players').remove()}
-function deletePlayer(k){if(confirm("刪除？"))db.ref('groups/'+groupId+'/players').child(k).remove()}
-function renderRoster(){const l=document.getElementById('roster-list');if(players.length===0){l.innerHTML="<div style='text-align:center;color:var(--text-dim)'>尚無人報名</div>";return}l.innerHTML=players.map(p=>`<div class="player-row"><div class="avatar">${p.photoURL?`<img src="${p.photoURL}">`:p.name[0]}</div><div style="flex:1"><div style="font-weight:700;">${p.name}</div><div style="font-size:12px;color:var(--text-dim)">${isAdmin?p.phone:'通訊隱藏'}</div></div>${isAdmin?`<button onclick="deletePlayer('${p.fbKey}')" style="background:none;border:1px solid var(--neon-red);color:var(--neon-red);border-radius:4px;padding:2px 8px;cursor:pointer;">刪除</button>`:''}</div>`).join('')}
-function toggleMyGames(){const l=document.getElementById('my-games-list');l.classList.toggle('open');document.getElementById('my-games-arrow').textContent=l.classList.contains('open')?'▲':'▼'}
-function switchTab(i){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.getAttribute('onclick').includes(i)));document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id==='sec-'+i))}
-function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
-function applyForHost(){if(confirm("申請成為團主？")){db.ref('hosts/'+currentUser.uid).set('pending').then(()=>showToast("申請已送出"))}}
-function sendFeedback(){const t=document.getElementById('feedback-text').value.trim();if(!t)return showToast("請輸入內容");db.ref('feedbacks').push({uid:currentUser.uid,name:currentUser.displayName,content:t,time:Date.now()}).then(()=>{document.getElementById('feedback-text').value="";showToast("回饋已送出")})}
+function loadRoomData(id) {
+  db.ref('groups/' + id + '/settings').on('value', (s) => {
+    const st = s.val();
+    if (st) {
+      if (st.ownerUid === currentUser.uid) { isAdmin = true; document.body.classList.add('is-admin'); }
+      document.getElementById('disp-venue').textContent = st.venue || "尚未設定";
+      document.getElementById('disp-date').textContent = st.date || "-";
+      document.getElementById('disp-time').textContent = st.time || "-";
+      document.getElementById('disp-fee-m').textContent = st.feeM || "-";
+      document.getElementById('disp-fee-f').textContent = st.feeF || "-";
+      if (st.note) { document.getElementById('note-box').style.display = 'block'; document.getElementById('disp-note').textContent = st.note; }
+      else { document.getElementById('note-box').style.display = 'none'; }
+      if (isAdmin) {
+          document.getElementById('set-venue').value = st.venue || ""; document.getElementById('set-date').value = st.date || "";
+          document.getElementById('set-time').value = st.time || ""; document.getElementById('set-fee-m').value = st.feeM || "";
+          document.getElementById('set-fee-f').value = st.feeF || ""; document.getElementById('set-note').value = st.note || "";
+      }
+    }
+  });
+  db.ref('groups/' + id + '/players').on('value', (s) => {
+    const d = s.val();
+    players = d ? Object.keys(d).map(k => ({...d[k], fbKey: k})) : [];
+    renderRoster();
+    document.getElementById('count').textContent = players.length;
+  });
+}
+
+function saveSettings() {
+  db.ref('groups/' + groupId + '/settings').update({
+    venue: document.getElementById('set-venue').value,
+    date: document.getElementById('set-date').value,
+    time: document.getElementById('set-time').value,
+    feeM: document.getElementById('set-fee-m').value,
+    feeF: document.getElementById('set-fee-f').value,
+    note: document.getElementById('set-note').value
+  }).then(() => showToast("儲存成功"));
+}
+
+function doSignup() {
+  const ph = document.getElementById('inp-phone').value.trim();
+  if (!ph) return showToast("請填電話");
+  if (players.some(p => p.uid === currentUser.uid)) return showToast("已報名");
+  db.ref('groups/' + groupId + '/players').push({ uid: currentUser.uid, name: currentUser.displayName, photoURL: currentUser.photoURL, phone: ph, time: Date.now() })
+    .then(() => { showToast("報名成功"); switchTab('roster'); });
+}
+
+function renderRoster() {
+  const l = document.getElementById('roster-list');
+  if (players.length === 0) { l.innerHTML = "<div style='text-align:center;color:var(--text-dim)'>尚無人報名</div>"; return; }
+  l.innerHTML = players.map(p => `
+    <div class="player-row">
+      <div class="avatar">${p.photoURL ? `<img src="${p.photoURL}">` : p.name[0]}</div>
+      <div style="flex:1"><div style="font-weight:700;">${p.name}</div><div style="font-size:12px;color:var(--text-dim)">${isAdmin?p.phone:'通訊隱藏'}</div></div>
+      ${isAdmin ? `<button onclick="deletePlayer('${p.fbKey}')" style="background:none;border:1px solid var(--neon-red);color:var(--neon-red);border-radius:4px;padding:2px 8px;">刪除</button>` : ''}
+    </div>`).join('');
+}
+
+function deletePlayer(k) { if(confirm("刪除？")) db.ref('groups/' + groupId + '/players').child(k).remove(); }
+function deleteGroup() { if(confirm("確定刪除球局？")) db.ref('groups/' + groupId).remove().then(() => window.location.href = window.location.pathname); }
+function switchTab(i) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.getAttribute('onclick').includes(i)));
+  document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === 'sec-' + i));
+}
+function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+function applyForHost() { if(confirm("申請成為團主？")) db.ref('hosts/' + currentUser.uid).set('pending').then(() => showToast("已送出申請")); }
+function sendFeedback() { const t = document.getElementById('feedback-text').value.trim(); if(!t) return showToast("請輸入內容"); db.ref('feedbacks').push({ uid: currentUser.uid, name: currentUser.displayName, content: t, time: Date.now() }).then(() => { document.getElementById('feedback-text').value=""; showToast("感謝回饋"); }); }
 </script>
 </body>
 </html>
