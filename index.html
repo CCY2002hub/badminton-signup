@@ -24,25 +24,9 @@ body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; heigh
 .logo { font-size: 18px; font-weight: 700; color: var(--neon-green); text-decoration: none; }
 .container { max-width: 960px; margin: 0 auto; padding: 2rem 1rem 5rem; }
 
-/* 標籤導覽列 (只做微調，確保排在同一列) */
-.tabs { 
-  display: flex; 
-  gap: 2px; /* 縮小間距 */
-  border-bottom: 1px solid var(--border); 
-  margin-bottom: 1.5rem; 
-  overflow-x: auto; /* 如果太寬可以左右滑 */
-  white-space: nowrap; /* 強制不准換行 */
-}
-.tab { 
-  padding: 12px 14px; /* 稍微縮小寬度 */
-  font-size: 13px; 
-  color: var(--text-dim); 
-  cursor: pointer; 
-  background: none; 
-  border: none; 
-  border-bottom: 2px solid transparent; 
-  flex-shrink: 0; /* 防止按鈕被壓扁 */
-}
+/* 標籤導覽列 (分頁不換行版) */
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; overflow-x: auto; white-space: nowrap; }
+.tab { padding: 12px 14px; font-size: 13px; color: var(--text-dim); cursor: pointer; background: none; border: none; border-bottom: 2px solid transparent; flex-shrink: 0; font-weight: 500; }
 .tab.active { color: var(--neon-green); border-bottom-color: var(--neon-green); }
 
 /* 卡片與按鈕 */
@@ -50,23 +34,26 @@ body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; heigh
 .btn-primary { width: 100%; padding: 12px; background: transparent; color: var(--neon-green); border: 1px solid var(--neon-green); border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
 .btn-primary:hover { background: rgba(100,255,218,0.1); }
 
+/* 下拉抽屜 */
 .sub-drawer { margin-bottom: 10px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
 .drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; cursor: pointer; background: rgba(255,255,255,0.03); }
 .drawer-content { display: none; padding: 10px; background: rgba(0,0,0,0.2); }
 .drawer-content.open { display: block; }
 
+/* 球局卡片樣式 */
 .game-card { cursor: pointer; border-left: 4px solid var(--neon-green); transition: 0.3s; margin-bottom: 8px; padding: 12px !important; }
 .game-card.draft { border-left-color: var(--neon-orange); }
+.game-card:hover { transform: translateX(5px); background: rgba(255,255,255,0.05); }
 
-/* 頁面切換控制 (保持修正後的安全版) */
+/* 區塊顯示控制 */
 #login-screen, #lobby-screen, #room-screen, .section { display: none; }
 .admin-only { display: none !important; }
 .is-admin .admin-only { display: block !important; }
 
+/* 其他細節 */
 input, select, textarea { width: 100%; padding: 11px; background: rgba(2,12,27,0.3); border: 1px solid var(--border); border-radius: 8px; color: #fff; margin-bottom: 1rem; }
 .badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: bold; background: rgba(100,255,218,0.1); color: var(--neon-green); border: 1px solid var(--neon-green); }
 .weekday-divider { color: var(--neon-green); font-size: 14px; font-weight: bold; margin: 25px 0 10px; border-left: 3px solid var(--neon-green); padding-left: 10px; }
-
 .toast { position: fixed; bottom: 2rem; left: 50%; transform: translate(-50%, 100px); background: rgba(10,25,47,0.9); border: 1px solid var(--neon-green); padding: 12px 24px; border-radius: 20px; font-size: 13px; color: var(--neon-green); transition: 0.3s; z-index: 200; }
 .toast.show { transform: translate(-50%, 0); }
 </style>
@@ -83,7 +70,7 @@ input, select, textarea { width: 100%; padding: 11px; background: rgba(2,12,27,0
   </div>
 </header>
 
-<div id="login-screen" class="container" style="flex-direction:column; align-items:center; justify-content:center; height:75vh;">
+<div id="login-screen" class="container" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:75vh;">
   <div class="card" style="text-align:center; width:100%; max-width:400px; padding:2.5rem;">
     <div style="font-size:56px; margin-bottom:15px;">🏸</div>
     <h2 style="color:var(--neon-green); margin-bottom:20px;">深海羽球系統</h2>
@@ -225,9 +212,15 @@ auth.onAuthStateChanged((user) => {
 function signInWithGoogle() { auth.signInWithPopup(provider); }
 function signOut() { auth.signOut().then(() => window.location.href = window.location.pathname); }
 
+// 🟢 修改後的權限檢查 (支援物件格式)
 function checkHostStatus(uid) {
   db.ref('hosts/' + uid).on('value', (s) => {
-    const status = s.val();
+    const data = s.val();
+    if (!data) return;
+    
+    // 如果資料庫裡存的是舊的單一字串，或是新的物件格式 status
+    const status = (typeof data === 'object') ? data.status : data;
+
     if (status === 'approved') {
       document.getElementById('create-btn').style.display = 'block';
       document.getElementById('apply-btn').style.display = 'none';
@@ -236,6 +229,19 @@ function checkHostStatus(uid) {
       document.getElementById('apply-btn').disabled = true;
     }
   });
+}
+
+// 🟢 修改後的團主申請 (自動存入姓名、Email 以便辨識)
+function applyForHost() {
+  if (confirm("申請成為團主？送出後系統將記錄您的名稱與 Email 以供審核。")) {
+    db.ref('hosts/' + currentUser.uid).set({
+        status: 'pending',
+        name: currentUser.displayName,
+        email: currentUser.email,
+        photo: currentUser.photoURL,
+        time: Date.now()
+    }).then(() => showToast("申請已送出"));
+  }
 }
 
 function loadLobbyGames() {
@@ -291,7 +297,7 @@ function loadLobbyGames() {
         classifiedGames[day].forEach(gameCard => otherHtml += gameCard);
       }
     });
-    otherContainer.innerHTML = otherHtml || `<div style="color:var(--text-dim); padding:20px; text-align:center; font-size:13px;">目前尚無其他開放球局</div>`;
+    otherContainer.innerHTML = otherHtml || `<div style="color:var(--text-dim); padding:20px; text-align:center; font-size:13px;">目前尚無開放球局</div>`;
   });
 }
 
@@ -367,17 +373,10 @@ function deletePlayer(k) { if(confirm("確定刪除此球員？")) db.ref('group
 function deleteGroup() { if(confirm("確定永久刪除球局？")) db.ref('groups/' + groupId).remove().then(() => window.location.href = window.location.pathname); }
 
 function switchTab(i) {
-  document.querySelectorAll('.tab').forEach(t => {
-    if(t.getAttribute('onclick').includes(i)) t.classList.add('active');
-    else t.classList.remove('active');
-  });
-  document.querySelectorAll('.section').forEach(s => {
-    if(s.id === 'sec-' + i) s.classList.add('active');
-    else s.classList.remove('active');
-  });
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.getAttribute('onclick').includes(i)));
+  document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === 'sec-' + i));
 }
 function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
-function applyForHost() { if(confirm("申請成為團主？")) { db.ref('hosts/' + currentUser.uid).set('pending').then(() => showToast("申請已送出")); } }
 function sendFeedback() { const t = document.getElementById('feedback-text').value.trim(); if(!t) return showToast("請輸入內容"); db.ref('feedbacks').push({ uid: currentUser.uid, name: currentUser.displayName, content: t, time: Date.now() }).then(() => { document.getElementById('feedback-text').value=""; showToast("感謝回饋！"); }); }
 </script>
 </body>
