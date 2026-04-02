@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>羽球揪團佈告欄 - Ocean Professional Elite</title>
+<title>羽球揪團佈告欄 - Ocean Elite V2</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ===== 核心視覺：酷藍深海與玻璃擬態 ===== */
+/* ===== 核心視覺設定 ===== */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   color-scheme: dark;
@@ -24,41 +24,64 @@ body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; heigh
 .logo { font-size: 18px; font-weight: 700; color: var(--neon-green); text-decoration: none; }
 .container { max-width: 960px; margin: 0 auto; padding: 2rem 1rem 5rem; }
 
-/* 卡片與按鈕 */
+/* 標籤導覽列 (全新美化版) */
+.tabs-wrapper {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 60px; z-index: 30;
+  background: var(--bg-deep); /* 確保滑動時背景不透 */
+}
+.tabs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto; /* 啟動橫向滑動 */
+  scrollbar-width: none; /* 隱藏 Firefox 捲軸 */
+  -ms-overflow-style: none; /* 隱藏 IE 捲軸 */
+  padding: 0 5px;
+}
+.tabs::-webkit-scrollbar { display: none; } /* 隱藏 Chrome/Safari 捲軸 */
+
+.tab {
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dim);
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent; /* 預設底線透明 */
+  white-space: nowrap; /* 強制不換行 */
+  transition: all 0.3s;
+  letter-spacing: 1px;
+}
+.tab:hover { color: #fff; }
+.tab.active {
+  color: var(--neon-green);
+  border-bottom-color: var(--neon-green);
+  text-shadow: 0 0 10px rgba(100,255,218,0.5);
+}
+
+/* 其他卡片與按鈕 */
 .card { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
 .btn-primary { width: 100%; padding: 12px; background: transparent; color: var(--neon-green); border: 1px solid var(--neon-green); border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-.btn-primary:hover { background: rgba(100,255,218,0.1); box-shadow: 0 0 15px rgba(100,255,218,0.2); }
+.btn-primary:hover { background: rgba(100,255,218,0.1); }
 
-/* 下拉選單樣式 (抽屜) */
 .sub-drawer { margin-bottom: 10px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
-.drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; cursor: pointer; background: rgba(255,255,255,0.03); transition: 0.2s; }
-.drawer-header:hover { background: rgba(255,255,255,0.08); }
-.drawer-title { font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; cursor: pointer; background: rgba(255,255,255,0.03); }
 .drawer-content { display: none; padding: 10px; background: rgba(0,0,0,0.2); }
 .drawer-content.open { display: block; }
-.arrow { font-size: 10px; transition: 0.3s; opacity: 0.5; }
-.open .arrow { transform: rotate(180deg); }
 
-/* 標籤配色 */
-.tag-draft { color: var(--neon-orange); }
-.tag-active { color: var(--neon-green); }
-
-/* 球局卡片 */
 .game-card { cursor: pointer; border-left: 4px solid var(--neon-green); transition: 0.3s; margin-bottom: 8px; padding: 12px !important; }
 .game-card.draft { border-left-color: var(--neon-orange); }
-.game-card:hover { transform: translateX(5px); background: rgba(255,255,255,0.05); }
 
-/* 頁面切換控制 */
 #login-screen, #lobby-screen, #room-screen, .section { display: none; }
 .admin-only { display: none !important; }
 .is-admin .admin-only { display: block !important; }
 
-/* 常用組件 */
 input, select, textarea { width: 100%; padding: 11px; background: rgba(2,12,27,0.3); border: 1px solid var(--border); border-radius: 8px; color: #fff; margin-bottom: 1rem; }
 .badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: bold; background: rgba(100,255,218,0.1); color: var(--neon-green); border: 1px solid var(--neon-green); }
 .weekday-divider { color: var(--neon-green); font-size: 14px; font-weight: bold; margin: 25px 0 10px; border-left: 3px solid var(--neon-green); padding-left: 10px; }
 
-/* 吐司訊息 */
 .toast { position: fixed; bottom: 2rem; left: 50%; transform: translate(-50%, 100px); background: rgba(10,25,47,0.9); border: 1px solid var(--neon-green); padding: 12px 24px; border-radius: 20px; font-size: 13px; color: var(--neon-green); transition: 0.3s; z-index: 200; }
 .toast.show { transform: translate(-50%, 0); }
 </style>
@@ -70,12 +93,12 @@ input, select, textarea { width: 100%; padding: 11px; background: rgba(2,12,27,0
     <a href="?" class="logo">🏸 羽球揪團佈告欄</a>
     <div style="display:flex; align-items:center; gap:12px;">
       <span id="user-display-name" style="font-size:12px; color:var(--text-dim);"></span>
-      <button id="logout-btn" style="font-size:11px; padding:4px 10px; background:none; color:var(--text-dim); border:1px solid var(--border); border-radius:15px; cursor:pointer; display:none;" onclick="signOut()">登出</button>
+      <button style="font-size:11px; padding:4px 10px; background:none; color:var(--text-dim); border:1px solid var(--border); border-radius:15px; cursor:pointer;" onclick="signOut()">登出</button>
     </div>
   </div>
 </header>
 
-<div id="login-screen" class="container" style="flex-direction:column; align-items:center; justify-content:center; height:75vh;">
+<div id="login-screen" class="container" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:75vh;">
   <div class="card" style="text-align:center; width:100%; max-width:400px; padding:2.5rem;">
     <div style="font-size:56px; margin-bottom:15px;">🏸</div>
     <h2 style="color:var(--neon-green); margin-bottom:20px;">深海羽球系統</h2>
@@ -92,19 +115,17 @@ input, select, textarea { width: 100%; padding: 11px; background: rgba(2,12,27,0
   
   <div class="card" style="padding: 10px; border-color:rgba(100,255,218,0.2);">
     <h3 style="font-size:14px; color:var(--text-main); margin: 10px;">👑 我的管理中心</h3>
-    
     <div class="sub-drawer" id="drawer-draft">
         <div class="drawer-header" onclick="toggleDrawer('draft')">
             <div class="drawer-title tag-draft">📙 待完成草稿 <span id="draft-count">(0)</span></div>
-            <span class="arrow">▼</span>
+            <span>▼</span>
         </div>
         <div class="drawer-content" id="content-draft"></div>
     </div>
-
     <div class="sub-drawer" id="drawer-active">
         <div class="drawer-header" onclick="toggleDrawer('active')">
             <div class="drawer-title tag-active">✅ 已公開發佈 <span id="active-count">(0)</span></div>
-            <span class="arrow">▼</span>
+            <span>▼</span>
         </div>
         <div class="drawer-content" id="content-active"></div>
     </div>
@@ -112,21 +133,18 @@ input, select, textarea { width: 100%; padding: 11px; background: rgba(2,12,27,0
 
   <h3 style="color:var(--text-dim); margin-bottom:10px; margin-top:30px; font-size:16px;">🏸 其他開放球局</h3>
   <div id="other-games-container"></div>
-
-  <div class="card" style="margin-top:50px; border-color:rgba(100,255,218,0.1);">
-    <div class="card-title">📮 客服回饋 / 建議</div>
-    <textarea id="feedback-text" placeholder="有任何問題或建議？寫在這裡..."></textarea>
-    <button class="btn-primary" style="font-size:13px; padding:8px;" onclick="sendFeedback()">送出回饋</button>
-  </div>
 </div>
 
 <div id="room-screen" class="container">
-  <div style="margin-bottom:15px;"><button style="background:none; color:var(--text-dim); border:none; cursor:pointer;" onclick="window.location.href='?'">🔙 返回佈告欄</button></div>
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('game')">球局資訊</button>
-    <button class="tab" onclick="switchTab('signup')">報名臨打</button>
-    <button class="tab" onclick="switchTab('roster')">報名名單</button>
-    <button class="tab admin-only" onclick="switchTab('admin')">⚙️ 團主設定</button>
+  <div style="margin-bottom: 15px;"><button style="background:none; color:var(--text-dim); border:none; cursor:pointer; font-size:14px;" onclick="window.location.href='?'">🔙 返回佈告欄</button></div>
+  
+  <div class="tabs-wrapper">
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('game')">球局資訊</button>
+        <button class="tab" onclick="switchTab('signup')">報名臨打</button>
+        <button class="tab" onclick="switchTab('roster')">報名名單</button>
+        <button class="tab admin-only" onclick="switchTab('admin')">⚙️ 團主設定</button>
+    </div>
   </div>
 
   <div id="sec-game" class="section active">
@@ -134,8 +152,8 @@ input, select, textarea { width: 100%; padding: 11px; background: rgba(2,12,27,0
         <h2 id="disp-venue" style="color:var(--text-main); margin-bottom:10px;">📍 載入中...</h2>
         <p style="color:var(--neon-green); font-size:14px;">📅 <span id="disp-date"></span> <span id="disp-time"></span></p>
         <div style="display:flex; gap:10px; margin-top:15px;">
-            <div style="flex:1; background:rgba(24,95,165,0.1); padding:10px; border-radius:8px;">♂ 男 <b id="disp-fee-m"></b></div>
-            <div style="flex:1; background:rgba(237,147,177,0.1); padding:10px; border-radius:8px;">♀ 女 <b id="disp-fee-f"></b></div>
+            <div style="flex:1; background:rgba(24,95,165,0.1); padding:10px; border-radius:8px; border:1px solid rgba(24,95,165,0.2);">♂ 男 <b id="disp-fee-m"></b></div>
+            <div style="flex:1; background:rgba(237,147,177,0.1); padding:10px; border-radius:8px; border:1px solid rgba(237,147,177,0.2);">♀ 女 <b id="disp-fee-f"></b></div>
         </div>
         <div id="note-box" style="margin-top:20px; padding:15px; background:rgba(100,255,218,0.05); border-radius:8px; display:none;">
             <div style="font-size:11px; color:var(--neon-green);">📝 團主備註</div>
@@ -146,27 +164,34 @@ input, select, textarea { width: 100%; padding: 11px; background: rgba(2,12,27,0
 
   <div id="sec-signup" class="section">
     <div class="card">
-      <div class="card-title">報名資料</div>
+      <div class="card-title">填寫報名資料</div>
       <label>姓名</label><input type="text" id="inp-name" readonly>
-      <label>聯絡電話</label><input type="tel" id="inp-phone" onfocus="this.select()">
+      <label>聯絡電話</label><input type="tel" id="inp-phone" placeholder="09xx-xxx-xxx" onfocus="this.select()">
       <button class="btn-primary" onclick="doSignup()">確認報名</button>
     </div>
   </div>
 
   <div id="sec-roster" class="section">
-    <div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span class="card-title" style="border:none;">名單</span><span id="count" class="badge">0</span></div><div id="roster-list"></div></div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:15px;">
+        <span class="card-title" style="border:none; margin:0;">報名名單</span>
+        <span id="count" class="badge">0</span>
+      </div>
+      <div id="roster-list"></div>
+    </div>
   </div>
 
   <div id="sec-admin" class="section admin-only">
     <div class="card">
+        <div class="card-title">球局設定管理</div>
         <label>球館名稱</label><input type="text" id="set-venue" onfocus="this.select()">
         <label>打球日</label><select id="set-date"><option value="">請選擇...</option><option value="每週一">每週一</option><option value="每週二">每週二</option><option value="每週三">每週三</option><option value="每週四">每週四</option><option value="每週五">每週五</option><option value="每週六">每週六</option><option value="每週日">每週日</option></select>
         <label>時間</label><input type="time" id="set-time">
         <label>男生費用</label><input type="text" id="set-fee-m" onfocus="this.select()">
         <label>女生費用</label><input type="text" id="set-fee-f" onfocus="this.select()">
-        <label>備註</label><textarea id="set-note"></textarea>
-        <button class="btn-primary" onclick="saveSettings()">💾 儲存並發佈</button>
-        <button class="btn-primary" onclick="deleteGroup()" style="color:var(--neon-red); border-color:var(--neon-red); margin-top:30px;">🗑️ 刪除球局</button>
+        <label>備註內容</label><textarea id="set-note" placeholder="例如場地號碼、球款等"></textarea>
+        <button class="btn-primary" onclick="saveSettings()">💾 儲存設定</button>
+        <button class="btn-primary" onclick="deleteGroup()" style="color:var(--neon-red); border-color:var(--neon-red); margin-top:30px;">🗑️ 永久刪除球局</button>
     </div>
   </div>
 </div>
@@ -203,13 +228,11 @@ auth.onAuthStateChanged((user) => {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('lobby-screen').style.display = 'none';
   document.getElementById('room-screen').style.display = 'none';
-  document.getElementById('logout-btn').style.display = 'none';
 
   if (user) {
     currentUser = user;
     document.getElementById('user-display-name').textContent = "Hi, " + user.displayName;
     document.getElementById('inp-name').value = user.displayName;
-    document.getElementById('logout-btn').style.display = 'block';
     checkHostStatus(user.uid);
     if (!groupId) {
       document.getElementById('lobby-screen').style.display = 'block';
@@ -223,7 +246,7 @@ auth.onAuthStateChanged((user) => {
   }
 });
 
-function signInWithGoogle() { auth.signInWithPopup(provider); }
+function signInWithGoogle() { auth.signInWithPopup(provider).catch(err => showToast("登入失敗")); }
 function signOut() { auth.signOut().then(() => window.location.href = window.location.pathname); }
 
 function checkHostStatus(uid) {
@@ -282,8 +305,8 @@ function loadLobbyGames() {
 
     document.getElementById('draft-count').textContent = `(${draftCount})`;
     document.getElementById('active-count').textContent = `(${activeCount})`;
-    draftContent.innerHTML = draftHtml || `<div style="color:var(--text-dim); font-size:12px;">目前無草稿</div>`;
-    activeContent.innerHTML = myActiveHtml || `<div style="color:var(--text-dim); font-size:12px;">目前無已發佈球局</div>`;
+    draftContent.innerHTML = draftHtml || `<div style="color:var(--text-dim); font-size:12px;">無草稿</div>`;
+    activeContent.innerHTML = myActiveHtml || `<div style="color:var(--text-dim); font-size:12px;">無已發佈</div>`;
 
     let otherHtml = "";
     weekDays.forEach(day => {
@@ -292,15 +315,13 @@ function loadLobbyGames() {
         classifiedGames[day].forEach(gameCard => otherHtml += gameCard);
       }
     });
-    otherContainer.innerHTML = otherHtml || `<div style="color:var(--text-dim); padding:20px; text-align:center; font-size:13px;">目前尚無其他開放球局</div>`;
+    otherContainer.innerHTML = otherHtml || `<div style="color:var(--text-dim); padding:20px; text-align:center; font-size:13px;">目前尚無開放球局</div>`;
   });
 }
 
 function toggleDrawer(type) {
     const content = document.getElementById('content-' + type);
-    const header = document.getElementById('drawer-' + type);
     content.classList.toggle('open');
-    header.classList.toggle('open');
 }
 
 function createNewGroup() {
@@ -344,7 +365,7 @@ function saveSettings() {
     feeM: document.getElementById('set-fee-m').value,
     feeF: document.getElementById('set-fee-f').value,
     note: document.getElementById('set-note').value
-  }).then(() => showToast("設定已發佈！"));
+  }).then(() => showToast("設定已儲存！"));
 }
 
 function doSignup() {
@@ -357,24 +378,32 @@ function doSignup() {
 
 function renderRoster() {
   const l = document.getElementById('roster-list');
-  if (players.length === 0) { l.innerHTML = "<div style='text-align:center;color:var(--text-dim);padding:20px;'>尚無人報名</div>"; return; }
+  if (players.length === 0) { l.innerHTML = "<div style='text-align:center;color:var(--text-dim);padding:20px;'>目前尚無人報名</div>"; return; }
   l.innerHTML = players.map(p => `
     <div class="player-row">
       <div class="avatar">${p.photoURL ? `<img src="${p.photoURL}">` : p.name[0]}</div>
-      <div style="flex:1"><div style="font-weight:700;">${p.name}</div><div style="font-size:11px;color:var(--text-dim)">${isAdmin?p.phone:'通訊隱藏'}</div></div>
+      <div style="flex:1"><div style="font-weight:700;">${p.name}</div><div style="font-size:12px;color:var(--text-dim)">${isAdmin?p.phone:'通訊隱藏'}</div></div>
       ${isAdmin ? `<button onclick="deletePlayer('${p.fbKey}')" style="background:none;border:1px solid var(--neon-red);color:var(--neon-red);border-radius:4px;padding:2px 8px;cursor:pointer;font-size:10px;">刪除</button>` : ''}
     </div>`).join('');
 }
 
 function deletePlayer(k) { if(confirm("確定刪除此球員？")) db.ref('groups/' + groupId + '/players').child(k).remove(); }
-function deleteGroup() { if(confirm("🚨 確定永久刪除球局？此動作無法復原！")) db.ref('groups/' + groupId).remove().then(() => window.location.href = window.location.pathname); }
+function deleteGroup() { if(confirm("確定永久刪除球局？")) db.ref('groups/' + groupId).remove().then(() => window.location.href = window.location.pathname); }
+
 function switchTab(i) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.getAttribute('onclick').includes(i)));
-  document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === 'sec-' + id));
+  // 視覺切換按鈕狀態
+  document.querySelectorAll('.tab').forEach(t => {
+    if(t.getAttribute('onclick').includes(i)) t.classList.add('active');
+    else t.classList.remove('active');
+  });
+  // 切換內容區塊
+  document.querySelectorAll('.section').forEach(s => {
+    if(s.id === 'sec-' + i) s.classList.add('active');
+    else s.classList.remove('active');
+  });
 }
 function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
 function applyForHost() { if(confirm("申請成為團主？")) { db.ref('hosts/' + currentUser.uid).set('pending').then(() => showToast("申請已送出")); } }
-function sendFeedback() { const t = document.getElementById('feedback-text').value.trim(); if(!t) return showToast("請輸入內容"); db.ref('feedbacks').push({ uid: currentUser.uid, name: currentUser.displayName, content: t, time: Date.now() }).then(() => { document.getElementById('feedback-text').value=""; showToast("感謝回饋！"); }); }
 </script>
 </body>
 </html>
