@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>羽球揪團佈告欄 - Ocean Shuttlecock</title>
+<title>羽球揪團佈告欄 - Ocean Shuttlecock Professional</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 /* ===== 酷藍深海與羽球基調 ===== */
@@ -17,130 +17,104 @@
 }
 body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-deep); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
 
-/* 動態深海背景 */
-body::before {
-  content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: linear-gradient(135deg, #020c1b 0%, #0a192f 50%, #172a45 100%); z-index: -2;
-}
-
-/* 羽球與泡泡粒子特效 */
+/* 動態背景與粒子 */
+body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #020c1b 0%, #0a192f 50%, #172a45 100%); z-index: -2; }
 .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 .p-shuttle { position: absolute; font-size: 30px; color: rgba(100,255,218,0.1); animation: floatUp linear infinite; opacity: 0; }
-.p-bubble { position: absolute; background: rgba(100,255,218,0.05); border-radius: 50%; animation: floatBubble linear infinite; }
-@keyframes floatUp { 0% { transform: translateY(110vh) rotate(0deg); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; } }
-@keyframes floatBubble { 0% { transform: translateY(110vh) scale(0); opacity: 0; } 10% { opacity: 0.8; } 100% { transform: translateY(-20vh) scale(1.5); opacity: 0; } }
-.p-shuttle:nth-child(1) { left: 10%; animation-duration: 20s; font-size: 25px; }
-.p-shuttle:nth-child(2) { left: 50%; animation-duration: 25s; font-size: 40px; animation-delay: 3s;}
-.p-shuttle:nth-child(3) { left: 80%; animation-duration: 22s; font-size: 30px; animation-delay: 7s;}
-.p-bubble:nth-child(4) { width: 30px; height: 30px; left: 30%; animation-duration: 18s; }
-.p-bubble:nth-child(5) { width: 50px; height: 50px; left: 70%; animation-duration: 24s; animation-delay: 2s;}
+@keyframes floatUp { 0% { transform: translateY(110vh) rotate(0deg); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; } }
+.p-shuttle:nth-child(1) { left: 10%; animation-duration: 20s; }
+.p-shuttle:nth-child(2) { left: 80%; animation-duration: 25s; animation-delay: 5s; }
 
-/* UI 元件 (玻璃擬態) */
+/* UI 元件 */
 .header { background: var(--glass-header); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 0 1.5rem; position: sticky; top: 0; z-index: 40; }
 .header-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
-.logo { font-size: 18px; font-weight: 700; color: var(--neon-green); text-decoration: none; text-shadow: 0 0 10px rgba(100,255,218,0.3); }
-.btn-outline { font-size: 12px; padding: 6px 16px; border: 1px solid var(--neon-green); border-radius: 20px; background: transparent; color: var(--neon-green); cursor: pointer; transition: 0.2s; }
-.btn-outline:hover { background: rgba(100,255,218,0.1); box-shadow: 0 0 15px rgba(100,255,218,0.2); }
+.logo { font-size: 18px; font-weight: 700; color: var(--neon-green); text-decoration: none; }
 .container { max-width: 960px; margin: 0 auto; padding: 2rem 1rem 5rem; }
-.card { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; position: relative; overflow: hidden;}
+.card { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
 .card-title { font-size: 16px; font-weight: 700; color: var(--text-dim); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 1rem; }
 
-/* 按鈕與輸入框 */
-.btn-primary { width: 100%; padding: 12px; background: transparent; color: var(--neon-green); border: 1px solid var(--neon-green); border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 1rem; position: relative; overflow: hidden; z-index: 1;}
-.btn-primary::before { content: "🏸"; position: absolute; font-size: 40px; opacity: 0; color: rgba(100,255,218,0.1); transition: 0.3s; z-index: -1; transform: translate(-50%, -50%) rotate(-15deg); top: 50%; left: 50%; }
-.btn-primary:hover { background: rgba(100,255,218,0.1); box-shadow: 0 0 20px rgba(100,255,218,0.3); color: #fff; }
-.btn-primary:hover::before { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
-
-input, select { width: 100%; padding: 11px 15px; background: rgba(2,12,27,0.3); border: 1px solid var(--border); border-radius: 8px; color: var(--text-main); margin-bottom: 1rem; font-family: 'Noto Sans TC', sans-serif; }
-input:focus, select:focus { outline: none; border-color: var(--neon-green); box-shadow: 0 0 10px rgba(100,255,218,0.2); }
-input[readonly] { background: rgba(10,25,47,0.6); color: var(--text-dim); }
-select option { background: var(--bg-dark); color: var(--text-main); }
+/* 按鈕與輸入 */
+.btn-primary { width: 100%; padding: 12px; background: transparent; color: var(--neon-green); border: 1px solid var(--neon-green); border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+.btn-primary:hover { background: rgba(100,255,218,0.1); box-shadow: 0 0 15px rgba(100,255,218,0.2); }
+input, select, textarea { width: 100%; padding: 11px 15px; background: rgba(2,12,27,0.3); border: 1px solid var(--border); border-radius: 8px; color: var(--text-main); margin-bottom: 1rem; font-family: inherit; }
+textarea { resize: none; height: 80px; }
 label { font-size: 12px; color: var(--neon-green); margin-bottom: 5px; display: block; }
 
-::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.7; cursor: pointer; }
-::-webkit-calendar-picker-indicator:hover { opacity: 1; }
+/* 大廳球局卡片 */
+.game-card { cursor: pointer; border-left: 4px solid var(--neon-green); transition: 0.3s; position: relative; }
+.game-card:hover { transform: translateY(-4px); background: rgba(23,42,69,0.8); }
 
-/* 首頁球局卡片 */
-.game-card { cursor: pointer; border-left: 4px solid var(--neon-green); transition: 0.3s; }
-.game-card::after { content: "🏸"; position: absolute; right: 10px; bottom: 5px; font-size: 40px; opacity: 0.05; color: var(--neon-green); transition: 0.3s; }
-.game-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-left-color: #fff; background: rgba(23,42,69,0.8); }
-.game-card:hover::after { opacity: 0.2; transform: rotate(-15deg) scale(1.1); }
+/* 摺疊選單 */
+.collapsible-header { display: flex; justify-content: space-between; align-items: center; background: rgba(100,255,218,0.05); border: 1px solid rgba(100,255,218,0.2); padding: 12px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 10px; }
+.collapsible-content { display: none; margin-bottom: 20px; }
+.collapsible-content.open { display: grid; gap: 15px; }
 
-/* 摺疊選單樣式 */
-.collapsible-header { display: flex; justify-content: space-between; align-items: center; background: rgba(100,255,218,0.05); border: 1px solid rgba(100,255,218,0.2); padding: 12px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 10px; transition: all 0.2s; }
-.collapsible-header:hover { background: rgba(100,255,218,0.1); box-shadow: 0 0 15px rgba(100,255,218,0.1); }
-.collapsible-content { display: none; margin-bottom: 30px; }
-.collapsible-content.open { display: grid; gap: 15px; animation: fadeIn 0.3s; }
-.arrow-icon { transition: transform 0.3s; color: var(--neon-green); font-size: 12px; }
-.arrow-icon.open { transform: rotate(180deg); }
-
-/* 名單與標籤 */
+/* 標籤與狀態 */
 .badge { font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: bold; background: rgba(100,255,218,0.1); color: var(--neon-green); border: 1px solid var(--neon-green); }
 .player-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
-.avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(100,255,218,0.1); color: var(--neon-green); border: 1px solid rgba(100,255,218,0.3); overflow: hidden; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(100,255,218,0.1); border: 1px solid rgba(100,255,218,0.3); overflow: hidden; }
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
-.tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; overflow-x: auto; }
-.tab { padding: 12px 18px; font-size: 13px; font-weight: 500; border: none; background: none; color: var(--text-dim); cursor: pointer; border-bottom: 2px solid transparent; }
-.tab.active { color: var(--neon-green); border-bottom-color: var(--neon-green); text-shadow: 0 0 10px rgba(100,255,218,0.3); }
+.tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+.tab { padding: 12px 18px; font-size: 13px; color: var(--text-dim); cursor: pointer; background: none; border: none; border-bottom: 2px solid transparent; }
+.tab.active { color: var(--neon-green); border-bottom-color: var(--neon-green); }
 
-/* 區塊顯示控制 */
 .section, #login-screen, #lobby-screen, #room-screen { display: none; }
 .section.active { display: block; animation: fadeIn 0.3s; }
-.is-admin .admin-only { display: block !important; }
 .admin-only { display: none !important; }
+.is-admin .admin-only { display: block !important; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* 吐司通知 */
-.toast { position: fixed; bottom: 2rem; left: 50%; transform: translate(-50%, 100px); background: rgba(10,25,47,0.9); border: 1px solid var(--neon-green); padding: 12px 24px; border-radius: 20px; font-size: 13px; color: var(--neon-green); transition: 0.3s; z-index: 200; box-shadow: 0 0 20px rgba(100,255,218,0.2); }
+.toast { position: fixed; bottom: 2rem; left: 50%; transform: translate(-50%, 100px); background: rgba(10,25,47,0.9); border: 1px solid var(--neon-green); padding: 12px 24px; border-radius: 20px; font-size: 13px; color: var(--neon-green); transition: 0.3s; z-index: 200; }
 .toast.show { transform: translate(-50%, 0); }
 </style>
 </head>
 <body>
 
-<div class="particles">
-  <div class="p-shuttle">🏸</div><div class="p-shuttle">🏸</div><div class="p-shuttle">🏸</div>
-  <div class="p-bubble"></div><div class="p-bubble"></div>
-</div>
+<div class="particles"><div class="p-shuttle">🏸</div><div class="p-shuttle">🏸</div></div>
 
 <header class="header">
   <div class="header-inner">
     <a href="?" class="logo">🏸 羽球揪團佈告欄</a>
     <div style="display:flex; align-items:center; gap:12px;">
       <span id="user-display-name" style="font-size:12px; color:var(--text-dim);"></span>
-      <button class="btn-outline" id="logout-btn" onclick="signOut()" style="display:none;">登出</button>
+      <button class="btn-outline" style="font-size:11px; padding:4px 10px; background:none; color:var(--text-dim); border:1px solid var(--border); border-radius:15px; cursor:pointer;" onclick="signOut()">登出</button>
     </div>
   </div>
 </header>
 
-<div id="login-screen" class="container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 75vh;">
-  <div class="card" style="text-align: center; width: 100%; max-width: 400px; padding: 2.5rem;">
-    <div style="font-size: 56px; margin-bottom: 15px; text-shadow: 0 0 20px rgba(100,255,218,0.3);">🏸</div>
+<div id="login-screen" class="container" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:75vh;">
+  <div class="card" style="text-align:center; width:100%; max-width:400px; padding:2.5rem;">
+    <div style="font-size:56px; margin-bottom:15px;">🏸</div>
     <h2 style="color:var(--neon-green); margin-bottom:10px;">深海羽球系統</h2>
-    <p style="color:var(--text-dim); font-size:13px; margin-bottom:30px;">登入以尋找或創建球局</p>
-    <button class="btn-primary" style="background:rgba(66,133,244,0.1); border-color:#4285F4; color:#fff;" onclick="signInWithGoogle()">使用 Google 帳號登入</button>
+    <button class="btn-primary" onclick="signInWithGoogle()">使用 Google 登入</button>
   </div>
 </div>
 
 <div id="lobby-screen" class="container">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
-    <h2 style="color:var(--neon-green); text-shadow: 0 0 15px rgba(100,255,218,0.2);">佈告欄</h2>
-    <button class="btn-primary" style="width:auto; margin:0; padding:8px 20px;" onclick="createNewGroup()">➕ 創建新球局</button>
+    <h2 style="color:var(--neon-green);">佈告欄</h2>
+    <button id="create-btn" class="btn-primary" style="width:auto; margin:0; padding:8px 20px; display:none;" onclick="createNewGroup()">➕ 創建新球局</button>
+    <button id="apply-btn" class="btn-outline" style="font-size:12px; padding:8px 15px; border:1px solid var(--neon-green); color:var(--neon-green); background:none; border-radius:8px; cursor:pointer;" onclick="applyForHost()">申請成為團主</button>
   </div>
   
   <div class="collapsible-header" onclick="toggleMyGames()">
-    <h3 style="color:var(--text-main); font-size:16px; margin:0; display:flex; align-items:center; gap:8px;">
-      👑 我管理的球局 <span id="my-games-count" style="font-size:13px; color:var(--text-dim); font-weight:normal;">(0)</span>
-    </h3>
-    <span id="my-games-arrow" class="arrow-icon">▼</span>
+    <h3 style="font-size:16px; margin:0;">👑 我管理的球局 <span id="my-games-count" style="font-size:12px;">(0)</span></h3>
+    <span id="my-games-arrow">▼</span>
   </div>
   <div id="my-games-list" class="collapsible-content"></div>
 
   <h3 style="color:var(--text-dim); margin-bottom:10px; margin-top:20px; font-size:16px;">🏸 其他開放球局</h3>
-  <div id="other-games-list" style="display: grid; gap: 15px;"></div>
+  <div id="other-games-list" style="display:grid; gap:15px;"></div>
+
+  <div class="card" style="margin-top:50px; border-color:rgba(100,255,218,0.1);">
+    <div class="card-title">📮 客服回饋 / 建議</div>
+    <textarea id="feedback-text" placeholder="有任何問題或想對開發者說的話？歡迎寫在這裡..."></textarea>
+    <button class="btn-primary" style="font-size:13px; padding:8px;" onclick="sendFeedback()">送出回饋</button>
+  </div>
 </div>
 
 <div id="room-screen" class="container">
-  <div style="margin-bottom: 15px;"><button class="btn-outline" onclick="window.location.href='?'">🔙 回到佈告欄</button></div>
+  <div style="margin-bottom:15px;"><button class="btn-outline" style="background:none; color:var(--text-dim); border:none; cursor:pointer;" onclick="window.location.href='?'">🔙 回到佈告欄</button></div>
   <div class="tabs">
     <button class="tab active" onclick="switchTab('game')">球局資訊</button>
     <button class="tab" onclick="switchTab('signup')">報名臨打</button>
@@ -154,63 +128,50 @@ label { font-size: 12px; color: var(--neon-green); margin-bottom: 5px; display: 
         <h2 style="color:var(--text-main); margin:0;">📍 <span id="disp-venue">載入中...</span></h2>
         <span class="badge">報名中</span>
       </div>
-      <p style="color:var(--neon-green); font-size:12px; margin-top:10px;">📅 時間： <span id="disp-date" style="color:var(--text-main); font-size:15px;">-</span> <span id="disp-time" style="color:var(--text-main); font-size:15px;">-</span></p>
+      <p style="color:var(--neon-green); font-size:12px;">📅 時間： <span id="disp-date" style="color:var(--text-main); font-size:15px;">-</span> <span id="disp-time" style="color:var(--text-main); font-size:15px;">-</span></p>
       <div style="display:flex; gap:10px; margin-top:15px;">
-        <div style="flex:1; background:rgba(24,95,165,0.1); padding:10px; border-radius:8px; color:var(--neon-blue); border:1px solid rgba(24,95,165,0.3);">♂ 男生 <b id="disp-fee-m">-</b></div>
-        <div style="flex:1; background:rgba(237,147,177,0.1); padding:10px; border-radius:8px; color:#ed93b1; border:1px solid rgba(237,147,177,0.3);">♀ 女生 <b id="disp-fee-f">-</b></div>
+        <div style="flex:1; background:rgba(24,95,165,0.1); padding:10px; border-radius:8px; color:var(--neon-blue);">♂ 男生 <b id="disp-fee-m">-</b></div>
+        <div style="flex:1; background:rgba(237,147,177,0.1); padding:10px; border-radius:8px; color:#ed93b1;">♀ 女生 <b id="disp-fee-f">-</b></div>
+      </div>
+      <div id="note-box" style="margin-top:20px; padding:15px; background:rgba(100,255,218,0.05); border-radius:8px; display:none;">
+        <div style="font-size:11px; color:var(--neon-green); margin-bottom:5px;">📝 團主備註</div>
+        <div id="disp-note" style="font-size:14px; white-space:pre-wrap;"></div>
       </div>
     </div>
   </div>
 
   <div id="sec-signup" class="section">
     <div class="card">
-      <div class="card-title">填寫報名資料</div>
-      <label>姓名 (Google 預設)</label> <input type="text" id="inp-name" readonly>
-      <label>聯絡電話</label> <input type="tel" id="inp-phone" placeholder="例如：0912-345-678" onfocus="this.select()">
+      <div class="card-title">報名資料</div>
+      <label>姓名</label> <input type="text" id="inp-name" readonly>
+      <label>聯絡電話</label> <input type="tel" id="inp-phone" placeholder="09xx-xxx-xxx" onfocus="this.select()">
       <button class="btn-primary" onclick="doSignup()">確認報名</button>
     </div>
   </div>
 
   <div id="sec-roster" class="section">
     <div class="card">
-      <div style="display:flex;justify-content:space-between; margin-bottom:15px; border-bottom:1px solid var(--border); padding-bottom:10px;">
-        <span class="card-title" style="border:none; margin:0; padding:0;">目前名單</span>
-        <span style="color:var(--neon-green); font-weight:bold;">共 <span id="count">0</span> 人</span>
+      <div style="display:flex;justify-content:space-between; margin-bottom:15px;">
+        <span class="card-title" style="border:none; margin:0;">報名名單</span>
+        <span id="count" class="badge">0</span>
       </div>
-      <div id="roster-list">載入中...</div>
+      <div id="roster-list"></div>
     </div>
   </div>
 
   <div id="sec-admin" class="section admin-only">
-    <div class="card" style="border-color:rgba(100,255,218,0.3);">
-      <div class="card-title" style="color:var(--neon-green);">球局設定管理</div>
-      
-      <label>球館名稱 (大標題)</label> 
-      <input type="text" id="set-venue" placeholder="例如：大同運動中心" onfocus="this.select()">
-      
-      <label>固定打球日 (星期幾)</label>
-      <select id="set-date">
-        <option value="">請選擇...</option>
-        <option value="每週一">每週一</option>
-        <option value="每週二">每週二</option>
-        <option value="每週三">每週三</option>
-        <option value="每週四">每週四</option>
-        <option value="每週五">每週五</option>
-        <option value="每週六">每週六</option>
-        <option value="每週日">每週日</option>
-      </select>
-
-      <label>時間</label> 
-      <input type="time" id="set-time">
-      
-      <label>男生費用</label> 
-      <input type="text" id="set-fee-m" placeholder="例如：200" onfocus="this.select()">
-      
-      <label>女生費用</label> 
-      <input type="text" id="set-fee-f" placeholder="例如：150" onfocus="this.select()">
-      
+    <div class="card">
+      <div class="card-title">球局管理</div>
+      <label>球館名稱</label> <input type="text" id="set-venue" onfocus="this.select()">
+      <label>打球日</label>
+      <select id="set-date"><option value="">請選擇...</option><option value="每週一">每週一</option><option value="每週二">每週二</option><option value="每週三">每週三</option><option value="每週四">每週四</option><option value="每週五">每週五</option><option value="每週六">每週六</option><option value="每週日">每週日</option></select>
+      <label>時間</label> <input type="time" id="set-time">
+      <label>男生費用</label> <input type="text" id="set-fee-m" onfocus="this.select()">
+      <label>女生費用</label> <input type="text" id="set-fee-f" onfocus="this.select()">
+      <label>團主備註 (例如場地號碼、用球等)</label>
+      <textarea id="set-note" placeholder="在這裡寫下給球友的提醒..."></textarea>
       <button class="btn-primary" onclick="saveSettings()">儲存設定</button>
-      <button class="btn-primary" onclick="clearPlayers()" style="background:rgba(255,94,94,0.05); color:var(--neon-red); border-color:var(--neon-red); margin-top:20px;">⚠️ 清空名單</button>
+      <button class="btn-primary" onclick="deleteGroup()" style="border-color:var(--neon-red); color:var(--neon-red); margin-top:30px;">🗑️ 刪除球局</button>
     </div>
   </div>
 </div>
@@ -239,7 +200,6 @@ const provider = new firebase.auth.GoogleAuthProvider();
 
 const urlParams = new URLSearchParams(window.location.search);
 const groupId = urlParams.get('id');
-
 let currentUser = null;
 let players = [];
 let isAdmin = false;
@@ -251,9 +211,9 @@ auth.onAuthStateChanged((user) => {
 
   if (user) {
     currentUser = user;
-    document.getElementById('logout-btn').style.display = 'block';
     document.getElementById('user-display-name').textContent = "Hi, " + user.displayName;
     document.getElementById('inp-name').value = user.displayName;
+    checkHostStatus(user.uid); // 檢查是否有團主權限
     
     if (!groupId) {
       document.getElementById('lobby-screen').style.display = 'block';
@@ -264,15 +224,50 @@ auth.onAuthStateChanged((user) => {
     }
   } else {
     document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('logout-btn').style.display = 'none';
-    document.getElementById('user-display-name').textContent = "";
   }
 });
 
-function signInWithGoogle() { auth.signInWithPopup(provider).catch(err => showToast("登入失敗")); }
-function signOut() { auth.signOut().then(() => { window.location.href = window.location.pathname; }); }
+function signInWithGoogle() { auth.signInWithPopup(provider); }
+function signOut() { auth.signOut().then(() => window.location.href = window.location.pathname); }
 
-/* --- 大廳邏輯 --- */
+/* --- 團主權限控制 --- */
+function checkHostStatus(uid) {
+  db.ref('hosts/' + uid).on('value', (snapshot) => {
+    const status = snapshot.val();
+    if (status === 'approved') {
+      document.getElementById('create-btn').style.display = 'block';
+      document.getElementById('apply-btn').style.display = 'none';
+    } else if (status === 'pending') {
+      document.getElementById('apply-btn').textContent = '團主申請審核中...';
+      document.getElementById('apply-btn').disabled = true;
+    }
+  });
+}
+
+function applyForHost() {
+  if (confirm("確定要申請成為團主嗎？申請後請聯繫系統管理員開通。")) {
+    db.ref('hosts/' + currentUser.uid).set('pending').then(() => {
+      showToast("申請已送出，請等待審核");
+    });
+  }
+}
+
+/* --- 客服回饋 --- */
+function sendFeedback() {
+  const text = document.getElementById('feedback-text').value.trim();
+  if (!text) return showToast("請輸入內容");
+  db.ref('feedbacks').push({
+    uid: currentUser.uid,
+    name: currentUser.displayName,
+    content: text,
+    time: Date.now()
+  }).then(() => {
+    document.getElementById('feedback-text').value = "";
+    showToast("回饋已送出，謝謝你！");
+  });
+}
+
+/* --- 大廳與房間邏輯 --- */
 function loadLobbyGames() {
   db.ref('groups').on('value', (snapshot) => {
     const data = snapshot.val();
@@ -281,9 +276,8 @@ function loadLobbyGames() {
     const countSpan = document.getElementById('my-games-count');
     
     if (!data) {
-      myList.innerHTML = `<div style="color:var(--text-dim); padding:10px;">目前尚無管理的球局</div>`;
-      otherList.innerHTML = `<div style="color:var(--text-dim); padding:10px;">目前尚無開放的球局</div>`;
-      countSpan.textContent = "(0)";
+      myList.innerHTML = `<div style="color:var(--text-dim); padding:10px;">目前尚無球局</div>`;
+      otherList.innerHTML = `<div style="color:var(--text-dim); padding:10px;">目前尚無球局</div>`;
       return;
     }
     
@@ -294,51 +288,31 @@ function loadLobbyGames() {
       const settings = group.settings;
       if (settings) {
         const playerCount = group.players ? Object.keys(group.players).length : 0;
-        const venueDisplay = settings.venue || "尚未設定球館";
-        
         const cardHtml = `
           <div class="card game-card" onclick="window.location.href='?id=${group.id}'" style="margin-bottom:0;">
             <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
-              <h3 style="color:var(--text-main); font-size:16px; margin:0;">📍 ${venueDisplay}</h3>
+              <h3 style="color:var(--text-main); font-size:16px; margin:0;">📍 ${settings.venue || "未設定"}</h3>
               <span class="badge">${playerCount} 人</span>
             </div>
             <div style="font-size:13px; color:var(--text-dim);">📅 ${settings.date || "-"} ${settings.time || "-"}</div>
           </div>`;
-          
         if(settings.ownerUid === currentUser.uid) { myHtml += cardHtml; myCount++; } 
         else { otherHtml += cardHtml; }
       }
     });
-    
     countSpan.textContent = `(${myCount})`;
-    myList.innerHTML = myHtml || `<div style="color:var(--text-dim); padding:10px;">目前尚無管理的球局，點擊右上角創建！</div>`;
-    otherList.innerHTML = otherHtml || `<div style="color:var(--text-dim); padding:10px;">目前沒有其他人開放的球局。</div>`;
+    myList.innerHTML = myHtml || `<div style="color:var(--text-dim); padding:10px;">點擊右上角創建球局！</div>`;
+    otherList.innerHTML = otherHtml || `<div style="color:var(--text-dim); padding:10px;">目前沒有其他球局。</div>`;
   });
-}
-
-function toggleMyGames() {
-  document.getElementById('my-games-list').classList.toggle('open');
-  document.getElementById('my-games-arrow').classList.toggle('open');
 }
 
 function createNewGroup() {
   const newId = Math.random().toString(36).substring(2, 8);
-  
-  // 創建時預設為「空字串」，這樣格子裡就不會有預先輸入的字了
-  const initialSettings = {
-    ownerUid: currentUser.uid,
-    venue: "", 
-    date: "", 
-    time: "", 
-    feeM: "", 
-    feeF: ""
-  };
-  db.ref('groups/' + newId + '/settings').set(initialSettings).then(() => {
-    window.location.href = window.location.pathname + "?id=" + newId;
-  });
+  db.ref('groups/' + newId + '/settings').set({
+    ownerUid: currentUser.uid, venue: "", date: "", time: "", feeM: "", feeF: "", note: ""
+  }).then(() => window.location.href = window.location.pathname + "?id=" + newId);
 }
 
-/* --- 房間邏輯 --- */
 function loadRoomData(id) {
   db.ref('groups/' + id + '/settings').on('value', (snapshot) => {
     const settings = snapshot.val();
@@ -347,25 +321,29 @@ function loadRoomData(id) {
         isAdmin = true;
         document.body.classList.add('is-admin');
       }
-      
-      // 顯示介面如果沒資料，顯示替代文字
-      document.getElementById('disp-venue').textContent = settings.venue || "尚未設定球館";
+      document.getElementById('disp-venue').textContent = settings.venue || "未設定";
       document.getElementById('disp-date').textContent = settings.date || "-";
       document.getElementById('disp-time').textContent = settings.time || "-";
       document.getElementById('disp-fee-m').textContent = settings.feeM || "-";
       document.getElementById('disp-fee-f').textContent = settings.feeF || "-";
       
+      if (settings.note) {
+        document.getElementById('note-box').style.display = 'block';
+        document.getElementById('disp-note').textContent = settings.note;
+      } else {
+        document.getElementById('note-box').style.display = 'none';
+      }
+
       if(isAdmin){
-          // 輸入框載入空字串，就會自動顯示 placeholder 的提示文字
           document.getElementById('set-venue').value = settings.venue || "";
           document.getElementById('set-date').value = settings.date || "";
           document.getElementById('set-time').value = settings.time || "";
           document.getElementById('set-fee-m').value = settings.feeM || "";
           document.getElementById('set-fee-f').value = settings.feeF || "";
+          document.getElementById('set-note').value = settings.note || "";
       }
     }
   });
-
   db.ref('groups/' + id + '/players').on('value', (snapshot) => {
     const data = snapshot.val();
     players = data ? Object.keys(data).map(key => ({...data[key], fbKey: key})) : [];
@@ -378,7 +356,6 @@ function doSignup() {
   const phone = document.getElementById('inp-phone').value.trim();
   if (!phone) return showToast("請填寫電話");
   if (players.some(p => p.uid === currentUser.uid)) return showToast("您已報名過囉！");
-
   db.ref('groups/' + groupId + '/players').push({ 
     uid: currentUser.uid, name: currentUser.displayName, photoURL: currentUser.photoURL, phone: phone, time: Date.now() 
   }).then(() => { showToast("報名成功！"); switchTab('roster'); });
@@ -387,41 +364,47 @@ function doSignup() {
 function saveSettings() {
   db.ref('groups/' + groupId + '/settings').update({
     venue: document.getElementById('set-venue').value,
-    date: document.getElementById('set-date').value, 
+    date: document.getElementById('set-date').value,
     time: document.getElementById('set-time').value,
-    feeM: document.getElementById('set-fee-m').value, 
+    feeM: document.getElementById('set-fee-m').value,
     feeF: document.getElementById('set-fee-f').value,
+    note: document.getElementById('set-note').value
   }).then(() => showToast("儲存成功！"));
 }
 
-function clearPlayers() { if (confirm("確定清空名單？")) db.ref('groups/' + groupId + '/players').remove().then(() => showToast("已清空")); }
+function deleteGroup() {
+  if (confirm("確定要刪除整個球局嗎？")) {
+    db.ref('groups/' + groupId).remove().then(() => window.location.href = window.location.pathname);
+  }
+}
+
+function clearPlayers() { if (confirm("確定清空名單？")) db.ref('groups/' + groupId + '/players').remove(); }
 function deletePlayer(key) { if(confirm("刪除此球員？")) db.ref('groups/' + groupId + '/players').child(key).remove(); }
 
 function renderRoster() {
   const list = document.getElementById('roster-list');
-  if (players.length === 0) { list.innerHTML = "<div style='color:var(--text-dim); text-align:center;'>尚無人報名</div>"; return; }
-  list.innerHTML = players.map((p) => {
-    const avatar = p.photoURL ? `<img src="${p.photoURL}">` : p.name[0];
-    return `
+  if (players.length === 0) { list.innerHTML = "<div style='text-align:center; color:var(--text-dim);'>尚無人報名</div>"; return; }
+  list.innerHTML = players.map((p) => `
     <div class="player-row">
-      <div class="avatar">${avatar}</div>
+      <div class="avatar">${p.photoURL ? `<img src="${p.photoURL}">` : p.name[0]}</div>
       <div style="flex:1">
         <div style="font-weight:700;">${p.name}</div>
         <div style="font-size:12px;color:var(--text-dim)">${isAdmin ? p.phone : '通訊隱藏'}</div>
       </div>
-      ${isAdmin ? `<button onclick="deletePlayer('${p.fbKey}')" class="btn-outline" style="color:var(--neon-red); border-color:var(--neon-red); padding:4px 8px;">刪除</button>` : ''}
-    </div>`
-  }).join('');
+      ${isAdmin ? `<button onclick="deletePlayer('${p.fbKey}')" style="background:none; border:1px solid var(--neon-red); color:var(--neon-red); border-radius:4px; padding:2px 8px; cursor:pointer;">刪除</button>` : ''}
+    </div>`).join('');
 }
 
+function toggleMyGames() {
+  document.getElementById('my-games-list').classList.toggle('open');
+  document.getElementById('my-games-arrow').textContent = document.getElementById('my-games-list').classList.contains('open') ? '▲' : '▼';
+}
 function switchTab(id) {
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.getAttribute('onclick').includes(id)));
   document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === 'sec-' + id));
 }
-
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
+  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2000);
 }
 </script>
