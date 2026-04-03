@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Elite 羽球系統 - V35 Full Expanded</title>
+<title>Elite 羽球系統 - V36 Accordion Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 /* ===== 核心視覺設定 (完全展開版) ===== */
@@ -86,7 +86,7 @@ body::before {
     text-shadow: 0 0 10px rgba(100,255,218,0.5); 
 }
 
-.region-tabs { display: flex; gap: 8px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px; }
+.region-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
 .region-tab { 
     padding: 8px 16px; 
     border-radius: 20px; 
@@ -195,7 +195,27 @@ label {
 }
 .info-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; font-size: 15px; }
 .info-label { color: var(--neon-green); font-weight: bold; min-width: 80px; }
-.weekday-divider { color: var(--neon-green); font-size: 15px; font-weight: bold; margin: 30px 0 15px; border-left: 4px solid var(--neon-green); padding-left: 12px; }
+
+/* 🌟 折疊抽屜 (Accordion) 設計 */
+.weekday-divider { 
+    color: var(--neon-green); 
+    font-size: 16px; 
+    font-weight: bold; 
+    margin: 25px 0 10px; 
+    border-left: 4px solid var(--neon-green); 
+    padding: 12px 15px; 
+    background: rgba(100, 255, 218, 0.05);
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.2s;
+    user-select: none;
+}
+.weekday-divider:hover {
+    background: rgba(100, 255, 218, 0.15);
+}
 
 /* 名單樣式 */
 .player-row { display: flex; flex-direction: column; gap: 12px; padding: 18px 0; border-bottom: 1px solid var(--border); }
@@ -282,22 +302,12 @@ label {
       <h3 style="color:var(--text-dim); font-size:18px;">🏸 開放報名中</h3>
   </div>
   
-  <div class="region-tabs" id="lobby-region-tabs">
+  <div class="region-tabs" id="lobby-region-tabs" style="margin-bottom: 25px;">
       <div class="region-tab active" data-val="北部" onclick="setRegionFilter('北部')">北部</div>
       <div class="region-tab" data-val="中部" onclick="setRegionFilter('中部')">中部</div>
       <div class="region-tab" data-val="南部" onclick="setRegionFilter('南部')">南部</div>
       <div class="region-tab" data-val="東部" onclick="setRegionFilter('東部')">東部</div>
       <div class="region-tab" data-val="外島" onclick="setRegionFilter('外島')">外島</div>
-  </div>
-  <div class="region-tabs" id="lobby-day-tabs" style="margin-bottom: 25px;">
-      <div class="region-tab active" data-val="全部" onclick="setDayFilter('全部')">全部</div>
-      <div class="region-tab" data-val="每週一" onclick="setDayFilter('每週一')">週一</div>
-      <div class="region-tab" data-val="每週二" onclick="setDayFilter('每週二')">週二</div>
-      <div class="region-tab" data-val="每週三" onclick="setDayFilter('每週三')">週三</div>
-      <div class="region-tab" data-val="每週四" onclick="setDayFilter('每週四')">週四</div>
-      <div class="region-tab" data-val="每週五" onclick="setDayFilter('每週五')">週五</div>
-      <div class="region-tab" data-val="每週六" onclick="setDayFilter('每週六')">週六</div>
-      <div class="region-tab" data-val="每週日" onclick="setDayFilter('每週日')">週日</div>
   </div>
 
   <div id="other-games-container">載入中...</div>
@@ -523,7 +533,7 @@ label {
       <label>補充備註</label>
       <textarea id="set-note" rows="5" placeholder="例如：提供幾面場地、用什麼球..."></textarea>
       
-      <button class="btn-primary" style="font-size:18px; padding:16px; margin-top:10px;" onclick="saveSettings()">💾 儲存並發佈球局</button>
+      <button class="btn-primary" style="font-size:18px; padding:16px; margin-top:10px;" onclick="saveSettings()">💾 儲存並發佈球隊</button>
       
       <div style="margin-top:50px; border-top:1px solid rgba(255,255,255,0.1); padding-top:30px;">
         <h3 style="color:var(--neon-red); font-size:16px; margin-bottom:20px;">🚫 黑名單管理 (被封鎖者將無法報名)</h3>
@@ -562,7 +572,6 @@ const db = firebase.database();
 const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 
-// 💡 您的上帝模式專屬 UID
 const SUPER_ADMIN = 'Lzs6gIJu74QcA9ZoAG0asg0nnBD3'; 
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -574,12 +583,10 @@ let groupSettings = { limit: 12, lvMin: 1, lvMax: 18 };
 let players = [];
 let selectedTags = [];
 
-// 雙重過濾器狀態
 let currentRegionFilter = '北部'; 
-let currentDayFilter = '全部';
 
 // ==========================================
-// 2. 介面初始化 (選單與標籤)
+// 2. 介面初始化
 // ==========================================
 function initSelects() {
     const lSel = document.getElementById('set-limit-select');
@@ -595,7 +602,6 @@ function initSelects() {
 }
 initSelects();
 
-// Hashtag 點擊互動
 document.querySelectorAll('.tag-item').forEach(item => {
     item.onclick = () => {
         item.classList.toggle('active');
@@ -609,7 +615,7 @@ document.querySelectorAll('.tag-item').forEach(item => {
 });
 
 // ==========================================
-// 3. 帳號登入與權限檢查
+// 3. 帳號登入
 // ==========================================
 auth.onAuthStateChanged((user) => {
   document.querySelectorAll('#login-screen, #lobby-screen, #room-screen').forEach(el => el.style.display = 'none');
@@ -638,7 +644,6 @@ function checkHostStatus(uid) {
   db.ref('hosts/' + uid).on('value', (s) => {
     const d = s.val();
     const st = (typeof d === 'object') ? d.status : d;
-    // 只有核准的團主或超級管理員可以創建球隊
     if (st === 'approved' || uid === SUPER_ADMIN) {
         document.getElementById('create-btn').style.display = 'block';
     }
@@ -646,7 +651,7 @@ function checkHostStatus(uid) {
 }
 
 // ==========================================
-// 4. 大廳過濾器與載入邏輯
+// 4. 大廳過濾器 (手風琴/折疊設計)
 // ==========================================
 function setRegionFilter(region) {
     currentRegionFilter = region;
@@ -657,21 +662,25 @@ function setRegionFilter(region) {
     loadLobby(); 
 }
 
-function setDayFilter(day) {
-    currentDayFilter = day;
-    const tabs = document.getElementById('lobby-day-tabs').children;
-    for(let i = 0; i < tabs.length; i++) {
-        tabs[i].classList.toggle('active', tabs[i].getAttribute('data-val') === day);
+// 🌟 點擊標題展開/收起
+function toggleDay(d) {
+    const content = document.getElementById('content-' + d);
+    const icon = document.getElementById('icon-' + d);
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.innerHTML = '▲ 收起';
+    } else {
+        content.style.display = 'none';
+        icon.innerHTML = '▼ 展開';
     }
-    loadLobby(); 
 }
 
 function loadLobby() {
   db.ref('groups').once('value').then((snap) => {
     const data = snap.val(); 
     if (!data) { 
-        document.getElementById('my-games-list').innerHTML = "<p style='color:gray;'>目前無球局</p>";
-        document.getElementById('other-games-container').innerHTML = "<p style='text-align:center; color:gray; padding:30px;'>目前無開放報名的球局</p>";
+        document.getElementById('my-games-list').innerHTML = "<p style='color:gray;'>目前無球隊</p>";
+        document.getElementById('other-games-container').innerHTML = "<p style='text-align:center; color:gray; padding:30px;'>目前無開放報名的球隊</p>";
         return; 
     }
     
@@ -714,16 +723,11 @@ function loadLobby() {
           </div>
         </div>`;
         
-      // 自己的管理球隊永遠顯示
       if (s.ownerUid === currentUser.uid || currentUser.uid === SUPER_ADMIN) { 
           myHtml += card; 
-      } 
-      // 別人的球隊：判斷區域與星期
-      else if (!isDraft) { 
+      } else if (!isDraft) { 
           const regionMatch = regionDisplay.includes(currentRegionFilter);
-          const dayMatch = (currentDayFilter === '全部') || (s.date === currentDayFilter);
-          
-          if (regionMatch && dayMatch) {
+          if (regionMatch) {
               if(classified[s.date]) classified[s.date].push(card);
           }
       }
@@ -731,17 +735,22 @@ function loadLobby() {
 
     document.getElementById('my-games-list').innerHTML = myHtml || "<p style='color:gray; font-size:14px; padding:10px;'>您目前無參與管理的球隊</p>";
     
+    // 🌟 輸出折疊抽屜結構 (Accordion)
     let finalOther = "";
     Object.keys(classified).forEach(d => { 
         if(classified[d].length > 0) { 
-            finalOther += `<div class="weekday-divider">${d}</div>` + classified[d].join(''); 
+            finalOther += `
+            <div class="weekday-divider" onclick="toggleDay('${d}')">
+                <span>📅 ${d} <span style="font-size:13px; color:var(--text-dim); margin-left:8px;">(${classified[d].length} 團)</span></span>
+                <span id="icon-${d}" style="font-size:13px; color:var(--text-dim);">▼ 展開</span>
+            </div>
+            <div id="content-${d}" style="display:none; padding-left:5px; animation: fadeIn 0.3s;">
+                ${classified[d].join('')}
+            </div>`; 
         } 
     });
     
-    let filterText = currentRegionFilter;
-    if(currentDayFilter !== '全部') filterText += " 的 " + currentDayFilter;
-    
-    document.getElementById('other-games-container').innerHTML = finalOther || `<p style='text-align:center; color:gray; padding:30px;'>目前【${filterText}】無符合的球隊</p>`;
+    document.getElementById('other-games-container').innerHTML = finalOther || `<p style='text-align:center; color:gray; padding:30px;'>目前【${currentRegionFilter}】無符合的球隊</p>`;
   });
 }
 
@@ -752,7 +761,6 @@ function checkAutoReset(id, s) {
         const weekDays = {"每週一":1, "每週二":2, "每週三":3, "每週四":4, "每週五":5, "每週六":6, "每週日":0};
         if (now.getDay() === weekDays[s.date]) {
             const [h, m] = s.timeEnd.split(':').map(Number);
-            // 結束後 30 分鐘觸發自動重置
             if ((now.getHours() * 60 + now.getMinutes()) > (h * 60 + m + 30)) {
                 db.ref(`groups/${id}/players`).remove().catch(()=>{});
                 db.ref(`groups/${id}/playerPhones`).remove().catch(()=>{});
@@ -763,7 +771,7 @@ function checkAutoReset(id, s) {
 }
 
 // ==========================================
-// 5. 球隊房間內部邏輯
+// 5. 球隊房間
 // ==========================================
 function loadRoom(id) {
   db.ref('groups/' + id + '/settings').on('value', (s) => {
@@ -777,11 +785,9 @@ function loadRoom(id) {
         loadBlacklist(st.ownerUid); 
     }
     
-    // 渲染 Hashtags
     const tagBox = document.getElementById('disp-hashtags');
     tagBox.innerHTML = (st.tags || []).map(t => `<span class="badge tag-badge">${t}</span>`).join('');
 
-    // 渲染一般資訊
     document.getElementById('disp-team-name').textContent = st.teamName ? "🏸 " + st.teamName : "🏸 未命名球隊";
     document.getElementById('disp-venue').textContent = st.venue || "未設定球館";
     document.getElementById('disp-region-badge').textContent = st.region || "北部";
@@ -797,7 +803,6 @@ function loadRoom(id) {
     document.getElementById('disp-fee-m').textContent = st.feeM || "0";
     document.getElementById('disp-fee-f').textContent = st.feeF || "0";
     
-    // 支付方式渲染
     let payStr = []; 
     const pSel = document.getElementById('inp-payment-choice'); 
     pSel.innerHTML = "";
@@ -811,7 +816,6 @@ function loadRoom(id) {
         document.getElementById('disp-note').textContent = st.note; 
     }
     
-    // 將資料填回管理表單
     if(isAdmin){
       document.getElementById('set-team-name').value = st.teamName || "";
       document.getElementById('set-region').value = st.region || "北部";
@@ -837,12 +841,10 @@ function loadRoom(id) {
     }
   });
 
-  // 監聽名單變動
   db.ref('groups/' + id + '/players').on('value', (s) => {
     const d = s.val(); 
     players = d ? Object.keys(d).map(k => ({...d[k], fbKey: k})) : [];
     
-    // 名單排序：已核准在上，審核中在下
     players.sort((a, b) => { 
         const aApp = a.status === 'approved' || !a.status; 
         const bApp = b.status === 'approved' || !b.status; 
@@ -888,7 +890,7 @@ function loadRoom(id) {
 }
 
 // ==========================================
-// 6. 報名與防護邏輯
+// 6. 報名防護
 // ==========================================
 async function doSignup() {
   const btn = document.getElementById('signup-btn'); 
@@ -896,7 +898,6 @@ async function doSignup() {
   btn.textContent = "資料傳送中...";
   
   try {
-      // 檢查黑名單
       try { 
           const blacksnap = await db.ref('blacklists/' + groupSettings.ownerUid + '/' + currentUser.uid).get(); 
           if (blacksnap.exists()) { 
@@ -916,7 +917,6 @@ async function doSignup() {
       if (lv < groupSettings.lvMin || lv > groupSettings.lvMax) throw new Error(`您的等級不符合團主要求！`);
       if (players.some(p => p.uid === currentUser.uid)) throw new Error("您已經報名過了！");
       
-      // 寫入資料 (強制 pending)
       await db.ref(`groups/${groupId}/players/${currentUser.uid}`).set({ 
           uid: currentUser.uid, 
           name: name, 
@@ -953,7 +953,7 @@ function getLvClass(lv) {
 }
 
 // ==========================================
-// 7. 名單渲染與管理介面
+// 7. 名單渲染
 // ==========================================
 function renderRoster() {
   const l = document.getElementById('roster-list');
@@ -973,7 +973,6 @@ function renderRoster() {
         });
     }
     
-    // 讀取信用紀錄
     db.ref('userRecords/' + p.uid).once('value', s => {
         const d = s.val(); 
         if (!d || !document.getElementById(recordId)) return;
@@ -989,7 +988,6 @@ function renderRoster() {
     
     const statusBadge = isApp ? '' : `<span class="badge" style="background:rgba(255,170,51,0.15); color:var(--neon-orange); border-color:var(--neon-orange); padding:4px 8px;">⏳ 等待審核</span>`;
     
-    // 產生按鈕
     let actionHtml = '';
     if (isAdmin) {
         if (isApp) { 
@@ -1026,7 +1024,7 @@ function renderRoster() {
 }
 
 // ==========================================
-// 8. 團主互動功能 (核准、刪除、評價)
+// 8. 團主功能
 // ==========================================
 function approvePlayer(uid) { 
     db.ref(`groups/${groupId}/players/${uid}`).update({ status: 'approved' }).then(() => showToast("✅ 已成功核准！")); 
@@ -1043,7 +1041,7 @@ function handleDeletePlayer(uid, fb, isApp) {
 
 function markLateCancel(uid, n) { 
     if(confirm(`確定標記 ${n} 臨退？`)) {
-        db.ref('userRecords/'+uid+'/lateCancels').push({time:Date.now()}).then(() => showToast("✅ 已成功標記臨退紀錄"));
+        db.ref('userRecords/'+uid+'/lateCancels').push({time:Date.now()}).then(() => showToast("✅ 已記錄"));
     } 
 }
 
@@ -1056,11 +1054,10 @@ function addToBlacklist(uid, n) {
 function rateSkill(uid, n) { 
     const s = prompt(`請輸入您對 ${n} 的實力鑑定等級 (1-18)：`, "10"); 
     if(s) {
-        db.ref('userRecords/'+uid+'/skillRatings').push({score:parseInt(s), rater:currentUser.uid}).then(() => showToast("✅ 鑑定成功，感謝評分"));
+        db.ref('userRecords/'+uid+'/skillRatings').push({score:parseInt(s), rater:currentUser.uid}).then(() => showToast("✅ 鑑定成功"));
     } 
 }
 
-// 儲存設定
 function saveSettings() { 
     db.ref('groups/' + groupId + '/settings').update({ 
         teamName: document.getElementById('set-team-name').value, 
@@ -1099,7 +1096,7 @@ function loadBlacklist(ownerId) {
 }
 
 // ==========================================
-// 9. 系統跳轉與功能
+// 9. 系統跳轉
 // ==========================================
 function createNewGroup() { 
     const nId = Math.random().toString(36).substring(2, 8); 
