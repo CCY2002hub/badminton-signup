@@ -3,191 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Elite 羽球系統 - V30 Performance Pro</title>
+<title>Elite 羽球系統 - V32 Ultimate Compact</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ===== 核心視覺設定 (完美還原寬敞間距) ===== */
+/* ===== 核心視覺設定 (玻璃擬態與寬敞間距) ===== */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   color-scheme: dark;
-  --bg-deep: #020c1b; 
-  --bg-dark: #0a192f; 
-  --text-main: #e6f1ff; 
-  --text-dim: #ccd6f6;
-  --neon-green: #64ffda; 
-  --neon-red: #ff5e5e; 
-  --neon-orange: #ffaa33; 
-  --neon-blue: #007bff;
-  --glass: rgba(17, 34, 64, 0.6); 
-  --glass-header: rgba(10, 25, 47, 0.8);
-  --border: rgba(100, 255, 218, 0.1); 
-  --radius: 12px;
+  --bg-deep: #020c1b; --bg-dark: #0a192f; --text-main: #e6f1ff; --text-dim: #ccd6f6;
+  --neon-green: #64ffda; --neon-red: #ff5e5e; --neon-orange: #ffaa33; --neon-blue: #007bff;
+  --glass: rgba(17, 34, 64, 0.6); --glass-header: rgba(10, 25, 47, 0.8);
+  --border: rgba(100, 255, 218, 0.1); --radius: 12px;
 }
-body { 
-    font-family: 'Noto Sans TC', sans-serif; 
-    background: var(--bg-deep); 
-    color: var(--text-main); 
-    min-height: 100vh; 
-    overflow-x: hidden; 
-}
-body::before { 
-    content: ""; 
-    position: fixed; 
-    top: 0; left: 0; width: 100%; height: 100%; 
-    background: linear-gradient(135deg, #020c1b 0%, #0a192f 50%, #172a45 100%); 
-    z-index: -2; 
-}
+body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-deep); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #020c1b 0%, #0a192f 50%, #172a45 100%); z-index: -2; }
 
 /* 頂部導覽 */
-.header { 
-    background: var(--glass-header); 
-    backdrop-filter: blur(10px); 
-    border-bottom: 1px solid var(--border); 
-    padding: 0 1.5rem; 
-    position: sticky; 
-    top: 0; 
-    z-index: 40; 
-    height: 60px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
-}
+.header { background: var(--glass-header); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 0 1.5rem; position: sticky; top: 0; z-index: 40; height: 60px; display: flex; align-items: center; justify-content: space-between; }
 .logo { font-size: 18px; font-weight: 700; color: var(--neon-green); text-decoration: none; }
 .container { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 5rem; }
 
-/* 分頁切換 */
-.tabs-wrapper { 
-    border-bottom: 1px solid var(--border); 
-    margin-bottom: 1.5rem; 
-    overflow-x: auto; 
-    white-space: nowrap; 
-    -webkit-overflow-scrolling: touch; 
-}
+/* 分頁與區域導航 */
+.tabs-wrapper { border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
 .tabs { display: inline-flex; gap: 5px; padding: 0 10px; }
-.tab { 
-    padding: 15px 18px; 
-    font-size: 15px; 
-    color: var(--text-dim); 
-    cursor: pointer; 
-    background: none; 
-    border: none; 
-    border-bottom: 3px solid transparent; 
-    flex-shrink: 0; 
-    font-weight: 700; 
-    transition: 0.3s; 
-}
-.tab.active { 
-    color: var(--neon-green); 
-    border-bottom-color: var(--neon-green); 
-    text-shadow: 0 0 10px rgba(100,255,218,0.5); 
-}
+.tab { padding: 15px 18px; font-size: 15px; color: var(--text-dim); cursor: pointer; background: none; border: none; border-bottom: 3px solid transparent; flex-shrink: 0; font-weight: 700; transition: 0.3s; }
+.tab.active { color: var(--neon-green); border-bottom-color: var(--neon-green); text-shadow: 0 0 10px rgba(100,255,218,0.5); }
 
-/* 區域導航標籤 (取消全台，新增外島) */
 .region-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
-.region-tab { 
-    padding: 8px 16px; 
-    border-radius: 20px; 
-    border: 1px solid #444; 
-    background: rgba(255,255,255,0.05); 
-    color: var(--text-dim); 
-    font-size: 14px; 
-    cursor: pointer; 
-    white-space: nowrap; 
-    transition: 0.2s; 
-}
-.region-tab.active { 
-    background: rgba(0, 123, 255, 0.2); 
-    border-color: var(--neon-blue); 
-    color: var(--neon-blue); 
-    font-weight: bold; 
-}
+.region-tab { padding: 8px 16px; border-radius: 20px; border: 1px solid #444; background: rgba(255,255,255,0.05); color: var(--text-dim); font-size: 14px; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+.region-tab.active { background: rgba(0, 123, 255, 0.2); border-color: var(--neon-blue); color: var(--neon-blue); font-weight: bold; }
 
-/* 卡片與按鈕元件 */
-.card { 
-    background: var(--glass); 
-    backdrop-filter: blur(10px); 
-    border: 1px solid var(--border); 
-    border-radius: var(--radius); 
-    padding: 2rem; 
-    margin-bottom: 1.5rem; 
-    position: relative; 
-}
-.btn-primary { 
-    width: 100%; 
-    padding: 14px; 
-    background: transparent; 
-    color: var(--neon-green); 
-    border: 1px solid var(--neon-green); 
-    border-radius: 8px; 
-    font-size: 16px;
-    font-weight: 700; 
-    cursor: pointer; 
-    transition: 0.2s; 
-}
+/* 卡片、按鈕與標籤 */
+.card { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; margin-bottom: 1.5rem; position: relative; }
+.btn-primary { width: 100%; padding: 14px; background: transparent; color: var(--neon-green); border: 1px solid var(--neon-green); border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
 .btn-primary:hover:not(:disabled) { background: rgba(100,255,218,0.1); box-shadow: 0 0 15px rgba(100,255,218,0.2); }
 .btn-primary:disabled { border-color: #444; color: #444; cursor: not-allowed; }
-
-.btn-danger { 
-    color: var(--neon-red); 
-    border: 1px solid var(--neon-red); 
-    background: none; 
-    border-radius: 6px; 
-    cursor: pointer; 
-    padding: 6px 12px; 
-    font-size: 12px; 
-    font-weight: bold; 
-    transition: 0.2s; 
-}
+.btn-danger { color: var(--neon-red); border: 1px solid var(--neon-red); background: none; border-radius: 6px; cursor: pointer; padding: 6px 12px; font-size: 12px; font-weight: bold; transition: 0.2s; }
 .btn-danger:hover { background: rgba(255,94,94,0.1); }
-
-/* 標籤設計 */
-.badge { 
-    font-size: 12px; 
-    padding: 5px 12px; 
-    border-radius: 20px; 
-    font-weight: bold; 
-    background: rgba(100,255,218,0.1); 
-    color: var(--neon-green); 
-    border: 1px solid var(--neon-green); 
-    margin-right: 8px; 
-    margin-bottom: 8px; 
-    display: inline-block;
-}
+.badge { font-size: 12px; padding: 5px 12px; border-radius: 20px; font-weight: bold; background: rgba(100,255,218,0.1); color: var(--neon-green); border: 1px solid var(--neon-green); margin-right: 8px; margin-bottom: 8px; display: inline-block; }
 .tag-badge { background: rgba(0, 123, 255, 0.15); color: var(--neon-blue); border-color: var(--neon-blue); }
 
-/* Hashtag 點選按鈕樣式 */
+/* Hashtag 選擇器 */
 .hashtag-selector { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 2rem; }
-.tag-item { 
-    padding: 8px 16px; 
-    border: 1px solid #444; 
-    border-radius: 20px; 
-    font-size: 13px; 
-    cursor: pointer; 
-    transition: 0.2s; 
-    color: gray; 
-}
+.tag-item { padding: 8px 16px; border: 1px solid #444; border-radius: 20px; font-size: 13px; cursor: pointer; transition: 0.2s; color: gray; }
 .tag-item.active { border-color: var(--neon-blue); color: var(--neon-blue); background: rgba(0, 123, 255, 0.1); }
 
 /* 表單與排版 */
-input, select, textarea { 
-    width: 100%; 
-    padding: 14px; 
-    background: rgba(2,12,27,0.4); 
-    border: 1px solid var(--border); 
-    border-radius: 8px; 
-    color: #fff; 
-    margin-bottom: 1.5rem; 
-    font-family: inherit; 
-    font-size: 15px;
-}
-label { 
-    font-size: 13px; 
-    color: var(--neon-green); 
-    margin-bottom: 8px; 
-    display: block; 
-    font-weight: bold; 
-    letter-spacing: 0.5px;
-}
+input, select, textarea { width: 100%; padding: 14px; background: rgba(2,12,27,0.4); border: 1px solid var(--border); border-radius: 8px; color: #fff; margin-bottom: 1.5rem; font-family: inherit; font-size: 15px; }
+label { font-size: 13px; color: var(--neon-green); margin-bottom: 8px; display: block; font-weight: bold; letter-spacing: 0.5px; }
 .info-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; font-size: 15px; }
 .info-label { color: var(--neon-green); font-weight: bold; min-width: 80px; }
 .weekday-divider { color: var(--neon-green); font-size: 15px; font-weight: bold; margin: 30px 0 15px; border-left: 4px solid var(--neon-green); padding-left: 12px; }
@@ -199,22 +62,16 @@ label {
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
 .admin-actions { display: flex; gap: 10px; margin-top: 8px; padding-left: 63px; overflow-x: auto; white-space: nowrap; padding-bottom: 5px; }
 
-/* 顯示邏輯 */
-.section { display: none; }
-.section.active { display: block !important; animation: fadeIn 0.3s; }
+/* 顯示邏輯與等級色塊 */
+.section { display: none; } .section.active { display: block !important; animation: fadeIn 0.3s; }
 #login-screen, #lobby-screen, #room-screen { display: none; }
-.admin-only { display: none !important; }
-.is-admin .admin-only { display: block !important; }
-
-/* 等級色塊 */
+.admin-only { display: none !important; } .is-admin .admin-only { display: block !important; }
 .lvl-badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 800; color: #fff; margin-left: 5px; border: 1px solid rgba(255,255,255,0.2); }
-.l1-3 { background: #4a7c1b; } .l4-5 { background: #a32d2d; } .l6-7 { background: #8e1c5c; } 
-.l8-9 { background: #b8860b; } .l10-12 { background: #104e8b; } .l13-15 { background: #696969; }
-.l16-18 { background: #000; border-color: var(--neon-green); }
+.l1-3 { background: #4a7c1b; } .l4-5 { background: #a32d2d; } .l6-7 { background: #8e1c5c; } .l8-9 { background: #b8860b; } .l10-12 { background: #104e8b; } .l13-15 { background: #696969; } .l16-18 { background: #000; border-color: var(--neon-green); }
 .warn-mark { color: var(--neon-red); font-weight: 800; font-size: 11px; border: 1px solid var(--neon-red); padding: 2px 6px; border-radius: 4px; margin-left: 5px; background: rgba(255,94,94,0.1); }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-.toast { position: fixed; bottom: 2rem; left: 50%; transform: translate(-50%, 100px); background: rgba(10,25,47,0.95); border: 1px solid var(--neon-green); padding: 14px 28px; border-radius: 20px; font-size: 14px; font-weight: bold; color: var(--neon-green); transition: 0.3s; z-index: 200; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+.toast { position: fixed; bottom: 2rem; left: 50%; transform: translate(-50%, 100px); background: rgba(10,25,47,0.95); border: 1px solid var(--neon-green); padding: 14px 28px; border-radius: 20px; font-size: 14px; font-weight: bold; color: var(--neon-green); transition: 0.3s; z-index: 9999; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
 .toast.show { transform: translate(-50%, 0); }
 </style>
 </head>
@@ -279,13 +136,11 @@ label {
   <div id="sec-game" class="section active">
     <div class="card">
       <div id="disp-hashtags" style="margin-bottom:20px; display:flex; flex-wrap:wrap;"></div>
-      
       <h2 id="disp-team-name" style="color:var(--neon-green); margin-bottom:10px; font-size:28px;">🏸 載入中...</h2>
       <div style="color:var(--text-main); font-size:16px; margin-bottom:20px;">
           📍 <span id="disp-venue">載入中...</span>
           <span id="disp-region-badge" class="badge tag-badge" style="margin-left:10px;">北部</span>
       </div>
-      
       <div id="disp-address" style="color:var(--neon-blue); text-decoration:underline; cursor:pointer; font-size:14px; margin-bottom:20px; margin-top:-10px;"></div>
       
       <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:25px;">
@@ -299,12 +154,10 @@ label {
       
       <div style="display:flex; gap:15px; margin-top:30px;">
         <div style="flex:1; background:rgba(24,95,165,0.1); padding:20px; border-radius:12px; text-align:center;">
-            <div style="color:var(--text-dim); margin-bottom:8px; font-size:14px;">♂ 男生費用</div>
-            <b id="disp-fee-m" style="font-size:22px; color:white;">0</b>
+            <div style="color:var(--text-dim); margin-bottom:8px; font-size:14px;">♂ 男生費用</div><b id="disp-fee-m" style="font-size:22px; color:white;">0</b>
         </div>
         <div style="flex:1; background:rgba(237,147,177,0.1); padding:20px; border-radius:12px; text-align:center;">
-            <div style="color:var(--text-dim); margin-bottom:8px; font-size:14px;">♀ 女生費用</div>
-            <b id="disp-fee-f" style="font-size:22px; color:white;">0</b>
+            <div style="color:var(--text-dim); margin-bottom:8px; font-size:14px;">♀ 女生費用</div><b id="disp-fee-f" style="font-size:22px; color:white;">0</b>
         </div>
       </div>
       <div id="note-box" style="margin-top:25px; padding:20px; background:rgba(100,255,218,0.05); border-radius:12px; display:none;">
@@ -367,7 +220,7 @@ label {
           <div class="tag-item" data-val="❄️ 有冷氣">❄️ 有冷氣</div>
           <div class="tag-item" data-val="🥤 飲水機">🥤 飲水機</div>
           <div class="tag-item" data-val="🚿 淋浴間">🚿 淋浴間</div>
-          <div class="tag-item" data-val="🎾 教練陪打">🎾 教練陪打</div>
+          <div class="tag-item" data-val="🏸 教練陪打">🏸 教練陪打</div>
           <div class="tag-item" data-val="🚗 好停車">🚗 好停車</div>
           <div class="tag-item" data-val="🚻 乾淨廁所">🚻 乾淨廁所</div>
       </div>
@@ -387,18 +240,11 @@ label {
       <label>詳細地址 (連動 Google 地圖導航)</label><input type="text" id="set-address" placeholder="請填寫完整地址以便球友導航">
       <label>打球日</label><select id="set-date"><option value="每週一">每週一</option><option value="每週二">每週二</option><option value="每週三">每週三</option><option value="每週四">每週四</option><option value="每週五">每週五</option><option value="每週六">每週六</option><option value="每週日">每週日</option></select>
       
-      <div style="display:flex; gap:20px; margin-bottom:1.5rem;">
-          <div style="flex:1;"><label>開始時間</label><input type="time" id="set-time-start" style="margin:0;"></div>
-          <div style="flex:1;"><label>結束時間</label><input type="time" id="set-time-end" style="margin:0;"></div>
-      </div>
-      
+      <div style="display:flex; gap:20px; margin-bottom:1.5rem;"><div style="flex:1;"><label>開始時間</label><input type="time" id="set-time-start" style="margin:0;"></div><div style="flex:1;"><label>結束時間</label><input type="time" id="set-time-end" style="margin:0;"></div></div>
       <label>限制總人數 (核准上限)</label><select id="set-limit-select"></select>
       
       <label>要求等級區間 (1-18)</label>
-      <div style="display:flex; gap:20px; margin-bottom:1.5rem;">
-          <div style="flex:1;"><label>最低等級</label><select id="set-lv-min" style="margin:0;"></select></div>
-          <div style="flex:1;"><label>最高等級</label><select id="set-lv-max" style="margin:0;"></select></div>
-      </div>
+      <div style="display:flex; gap:20px; margin-bottom:1.5rem;"><div style="flex:1;"><label>最低等級</label><select id="set-lv-min" style="margin:0;"></select></div><div style="flex:1;"><label>最高等級</label><select id="set-lv-max" style="margin:0;"></select></div></div>
       
       <label>接受支付方式 (可複選)</label>
       <div style="display:flex; gap:25px; margin-bottom:2rem; background:rgba(2,12,27,0.4); padding:15px; border-radius:8px; border:1px solid var(--border);">
@@ -406,13 +252,8 @@ label {
         <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:15px;"><input type="checkbox" id="check-linepay" style="width:20px; height:20px; margin:0;"> LinePay</label>
       </div>
 
-      <div style="display:flex; gap:20px; margin-bottom:1.5rem;">
-          <div style="flex:1;"><label>男生費用</label><input type="number" id="set-fee-m" style="margin:0;" placeholder="例: 200"></div>
-          <div style="flex:1;"><label>女生費用</label><input type="number" id="set-fee-f" style="margin:0;" placeholder="例: 150"></div>
-      </div>
-      
-      <label>補充備註</label>
-      <textarea id="set-note" rows="5" placeholder="例如：提供幾面場地、用什麼球..."></textarea>
+      <div style="display:flex; gap:20px; margin-bottom:1.5rem;"><div style="flex:1;"><label>男生費用</label><input type="number" id="set-fee-m" style="margin:0;" placeholder="例: 200"></div><div style="flex:1;"><label>女生費用</label><input type="number" id="set-fee-f" style="margin:0;" placeholder="例: 150"></div></div>
+      <label>補充備註</label><textarea id="set-note" rows="5" placeholder="例如：提供幾面場地、用什麼球..."></textarea>
       
       <button class="btn-primary" style="font-size:18px; padding:16px; margin-top:10px;" onclick="saveSettings()">💾 儲存並發佈球局</button>
       
@@ -433,6 +274,7 @@ label {
 <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
 
 <script>
+// 1. 初始化 Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyC8sgJZoA7U1rUY8mnLg-uZKkhMkaSVQ0c",
   authDomain: "badminton-1006.firebaseapp.com",
@@ -446,17 +288,15 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
-
 const SUPER_ADMIN = 'Lzs6gIJu74QcA9ZoAG0asg0nnBD3'; 
 const urlParams = new URLSearchParams(window.location.search);
 const groupId = urlParams.get('id');
 
 let currentUser = null, isAdmin = false, groupSettings = {limit:12, lvMin:1, lvMax:18};
 let players = [], selectedTags = [];
-
-// 🌟 預設一開始只載入「北部」，防止資料量太大卡死
 let currentRegionFilter = '北部'; 
 
+// 2. 初始化選單
 function initSelects() {
     const lSel = document.getElementById('set-limit-select');
     for(let i=1; i<=50; i++) lSel.add(new Option(i + " 人", i));
@@ -465,7 +305,7 @@ function initSelects() {
 }
 initSelects();
 
-// Hashtag 點擊邏輯
+// Hashtag 邏輯
 document.querySelectorAll('.tag-item').forEach(item => {
     item.onclick = () => {
         item.classList.toggle('active');
@@ -475,6 +315,7 @@ document.querySelectorAll('.tag-item').forEach(item => {
     };
 });
 
+// 3. 狀態與登入
 auth.onAuthStateChanged((user) => {
   document.querySelectorAll('#login-screen, #lobby-screen, #room-screen').forEach(el => el.style.display = 'none');
   if (user) {
@@ -496,16 +337,14 @@ function checkHostStatus(uid) {
   });
 }
 
-// 🌟 分區過濾器切換
 function setRegionFilter(region) {
     currentRegionFilter = region;
     const tabs = document.getElementById('lobby-region-tabs').children;
-    for(let i=0; i<tabs.length; i++) {
-        tabs[i].classList.toggle('active', tabs[i].textContent.includes(region));
-    }
-    loadLobby(); // 重新讀取
+    for(let i=0; i<tabs.length; i++) tabs[i].classList.toggle('active', tabs[i].textContent.includes(region));
+    loadLobby(); 
 }
 
+// 4. 大廳與自動重置
 function loadLobby() {
   db.ref('groups').once('value').then((snap) => {
     const data = snap.val(); 
@@ -521,14 +360,12 @@ function loadLobby() {
     Object.keys(data).forEach(id => {
       const g = data[id]; if(!g.settings) return;
       const s = g.settings;
-      
-      let appCnt = 0;
-      if (g.players) Object.values(g.players).forEach(p => { if(p.status === 'approved' || !p.status) appCnt++; });
+      let appCnt = 0; if (g.players) Object.values(g.players).forEach(p => { if(p.status === 'approved' || !p.status) appCnt++; });
       checkAutoReset(id, s);
       
       const isDraft = (!s.venue || s.venue === "未設定球館");
       const teamNameDisplay = s.teamName || "未命名球隊";
-      const regionDisplay = s.region || "北部"; // 預設防呆
+      const regionDisplay = s.region || "北部"; 
       
       const card = `
         <div class="card" onclick="window.location.href='?id=${id}'" style="cursor:pointer; border-left:5px solid ${isDraft?'var(--neon-orange)':'var(--neon-green)'}; padding:20px; margin-bottom:15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
@@ -546,25 +383,15 @@ function loadLobby() {
           </div>
         </div>`;
         
-      if (s.ownerUid === currentUser.uid || currentUser.uid === SUPER_ADMIN) { 
-          myHtml += card; 
-      } 
-      // 🌟 嚴格過濾：只將符合 currentRegionFilter 的球局推進分類陣列
+      if (s.ownerUid === currentUser.uid || currentUser.uid === SUPER_ADMIN) { myHtml += card; } 
       else if (!isDraft) { 
-          if (regionDisplay.includes(currentRegionFilter)) {
-              if(classified[s.date]) classified[s.date].push(card);
-          }
+          if (regionDisplay.includes(currentRegionFilter)) { if(classified[s.date]) classified[s.date].push(card); }
       }
     });
 
     document.getElementById('my-games-list').innerHTML = myHtml || "<p style='color:gray; font-size:14px; padding:10px;'>您目前無參與管理的球局</p>";
-    
     let finalOther = "";
-    Object.keys(classified).forEach(d => { 
-        if(classified[d].length > 0) { finalOther += `<div class="weekday-divider">${d}</div>` + classified[d].join(''); } 
-    });
-    
-    // 如果該區域真的沒有球局，顯示友善提示
+    Object.keys(classified).forEach(d => { if(classified[d].length > 0) { finalOther += `<div class="weekday-divider">${d}</div>` + classified[d].join(''); } });
     document.getElementById('other-games-container').innerHTML = finalOther || `<p style='text-align:center; color:gray; padding:30px;'>目前 ${currentRegionFilter} 無開放報名的球局</p>`;
   });
 }
@@ -585,6 +412,7 @@ function checkAutoReset(id, s) {
     }
 }
 
+// 5. 房間載入與同步
 function loadRoom(id) {
   db.ref('groups/' + id + '/settings').on('value', (s) => {
     const st = s.val(); if (!st) return; groupSettings = st;
@@ -596,7 +424,6 @@ function loadRoom(id) {
     document.getElementById('disp-team-name').textContent = st.teamName ? "🏸 " + st.teamName : "🏸 未命名球隊";
     document.getElementById('disp-venue').textContent = st.venue || "未設定球館";
     document.getElementById('disp-region-badge').textContent = st.region || "北部";
-    
     document.getElementById('disp-address').textContent = st.address || "無地址資訊";
     document.getElementById('disp-address').onclick = () => { if(st.address) window.open('https://www.google.com/maps/search/' + encodeURIComponent(st.address)); };
     document.getElementById('disp-date').textContent = st.date || "-";
@@ -615,10 +442,8 @@ function loadRoom(id) {
     if(isAdmin){
       document.getElementById('set-team-name').value = st.teamName || "";
       document.getElementById('set-region').value = st.region || "北部";
-      document.getElementById('set-venue').value = st.venue || ""; 
-      document.getElementById('set-address').value = st.address || "";
-      document.getElementById('set-date').value = st.date || "每週一";
-      document.getElementById('set-time-start').value = st.timeStart || ""; document.getElementById('set-time-end').value = st.timeEnd || "";
+      document.getElementById('set-venue').value = st.venue || ""; document.getElementById('set-address').value = st.address || "";
+      document.getElementById('set-date').value = st.date || "每週一"; document.getElementById('set-time-start').value = st.timeStart || ""; document.getElementById('set-time-end').value = st.timeEnd || "";
       document.getElementById('set-limit-select').value = st.limit || 12;
       document.getElementById('set-lv-min').value = st.lvMin || 1; document.getElementById('set-lv-max').value = st.lvMax || 18;
       document.getElementById('check-cash').checked = !!st.payCash; document.getElementById('check-linepay').checked = !!st.payLine;
@@ -641,8 +466,8 @@ function loadRoom(id) {
     const formBox = document.getElementById('signup-form-box'), msgBox = document.getElementById('signup-full-msg'), msgContent = document.getElementById('msg-content'), signupBtn = document.getElementById('signup-btn');
     if (me) {
         formBox.style.display = 'none'; msgBox.style.display = 'block';
-        if (me.status === 'pending') { msgContent.innerHTML = '⏳ 報名審核中...<br><span style="font-size:14px; color:gray;">(可至名單查看狀態)</span>'; msgContent.style.color = "var(--neon-orange)"; }
-        else { msgContent.innerHTML = '✅ 已成功加入球隊！<br><span style="font-size:14px; color:gray;">(若需請假請聯繫團主)</span>'; msgContent.style.color = "var(--neon-green)"; }
+        if (me.status === 'pending') { msgContent.innerHTML = '⏳ 報名審核中...<br><span style="font-size:14px; color:gray; margin-top:10px; display:inline-block;">請耐心等候，或至名單查看狀態</span>'; msgContent.style.color = "var(--neon-orange)"; }
+        else { msgContent.innerHTML = '✅ 已成功加入球隊！<br><span style="font-size:14px; color:gray; margin-top:10px; display:inline-block;">請準時出席，若需請假請聯繫團主</span>'; msgContent.style.color = "var(--neon-green)"; }
     } else {
         formBox.style.display = 'block'; msgBox.style.display = 'none';
         if (appCnt >= (groupSettings.limit||12)) { signupBtn.innerHTML = "📝 報名候補 (名額已滿)"; signupBtn.style.borderColor = "var(--neon-orange)"; signupBtn.style.color = "var(--neon-orange)"; }
@@ -651,6 +476,7 @@ function loadRoom(id) {
   });
 }
 
+// 6. 報名與防護邏輯
 async function doSignup() {
   const btn = document.getElementById('signup-btn'); btn.disabled = true; btn.textContent = "資料傳送中...";
   try {
@@ -694,16 +520,16 @@ function renderRoster() {
   }).join('');
 }
 
+// 7. 管理互動動作 (延遲反饋)
 function approvePlayer(uid) { db.ref(`groups/${groupId}/players/${uid}`).update({ status: 'approved' }).then(() => showToast("✅ 已核准！")); }
 function handleDeletePlayer(uid, fb, isApp) { if(confirm(isApp ? "從名單移除？" : "拒絕此人？")) { db.ref(`groups/${groupId}/players/${fb}`).remove().then(() => { db.ref(`groups/${groupId}/playerPhones/${uid}`).remove(); showToast("✅ 已移除"); }); } }
-function markLateCancel(uid, n) { if(confirm(`標記 ${n} 臨退？`)) db.ref('userRecords/'+uid+'/lateCancels').push({time:Date.now()}); }
-function addToBlacklist(uid, n) { if(confirm(`封鎖 ${n}？`)) db.ref('blacklists/'+groupSettings.ownerUid+'/'+uid).set({name:n, time:Date.now()}); }
-function rateSkill(uid, n) { const s = prompt(`鑑定等級 (1-18)：`, "10"); if(s) db.ref('userRecords/'+uid+'/skillRatings').push({score:parseInt(s), rater:currentUser.uid}); }
+function markLateCancel(uid, n) { if(confirm(`標記 ${n} 臨退？`)) db.ref('userRecords/'+uid+'/lateCancels').push({time:Date.now()}).then(() => showToast("✅ 已標記臨退")); }
+function addToBlacklist(uid, n) { if(confirm(`封鎖 ${n}？`)) db.ref('blacklists/'+groupSettings.ownerUid+'/'+uid).set({name:n, time:Date.now()}).then(() => showToast("✅ 已封鎖")); }
+function rateSkill(uid, n) { const s = prompt(`鑑定等級 (1-18)：`, "10"); if(s) db.ref('userRecords/'+uid+'/skillRatings').push({score:parseInt(s), rater:currentUser.uid}).then(() => showToast("✅ 鑑定完成")); }
 
 function saveSettings() {
   db.ref('groups/' + groupId + '/settings').update({
-    teamName: document.getElementById('set-team-name').value,
-    region: document.getElementById('set-region').value,
+    teamName: document.getElementById('set-team-name').value, region: document.getElementById('set-region').value,
     venue: document.getElementById('set-venue').value, address: document.getElementById('set-address').value,
     date: document.getElementById('set-date').value, timeStart: document.getElementById('set-time-start').value,
     timeEnd: document.getElementById('set-time-end').value, limit: parseInt(document.getElementById('set-limit-select').value),
@@ -713,14 +539,32 @@ function saveSettings() {
     tags: selectedTags, lastResetDate: new Date().toLocaleDateString()
   }).then(() => showToast("💾 設定已發佈！")).catch(e => showToast("❌ 儲存失敗"));
 }
-function loadBlacklist(ownerId) { db.ref('blacklists/' + ownerId).on('value', s => { const d = s.val(), el = document.getElementById('blacklist-view'); if(!d) { el.innerHTML = "無"; return; } el.innerHTML = Object.keys(d).map(uid => `<div style="display:flex; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid #333; padding-bottom:8px;"><span>${d[uid].name}</span><button class="btn-danger" onclick="db.ref('blacklists/${ownerId}/${uid}').remove()">解除</button></div>`).join(''); }); }
-function createNewGroup() { const newId = Math.random().toString(36).substring(2, 8); db.ref('groups/' + newId + '/settings').set({ ownerUid: currentUser.uid, teamName: "新球隊", region: "北部", venue: "未設定球館", date: "每週一", lvMin: 1, lvMax: 18, limit: 12, payCash: true, tags: [], lastResetDate: new Date().toLocaleDateString() }).then(() => window.location.href = "?id=" + newId); }
-function deleteGroup() { if(confirm("永久刪除？")) db.ref('groups/' + groupId).remove().then(() => window.location.href = "?"); }
+function loadBlacklist(ownerId) { db.ref('blacklists/' + ownerId).on('value', s => { const d = s.val(), el = document.getElementById('blacklist-view'); if(!d) { el.innerHTML = "無"; return; } el.innerHTML = Object.keys(d).map(uid => `<div style="display:flex; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid #333; padding-bottom:8px;"><span>${d[uid].name}</span><button class="btn-danger" onclick="db.ref('blacklists/${ownerId}/${uid}').remove().then(()=>showToast('✅ 已解除封鎖'))">解除</button></div>`).join(''); }); }
+
+// 🌟 延遲跳轉處理
+function createNewGroup() { 
+    const newId = Math.random().toString(36).substring(2, 8); 
+    db.ref('groups/' + newId + '/settings').set({ ownerUid: currentUser.uid, teamName: "新球隊", region: "北部", venue: "未設定球館", date: "每週一", lvMin: 1, lvMax: 18, limit: 12, payCash: true, tags: [], lastResetDate: new Date().toLocaleDateString() })
+    .then(() => {
+        showToast("✅ 球隊創建成功！跳轉中...");
+        setTimeout(() => { window.location.href = "?id=" + newId; }, 1500);
+    }).catch(() => showToast("❌ 失敗：請確認您是否具備團主權限")); 
+}
+
+function deleteGroup() { 
+    if(confirm("確定永久刪除這個球隊嗎？所有資料將無法復原！")) {
+        db.ref('groups/' + groupId).remove().then(() => {
+            showToast("✅ 已成功刪除！即將返回大廳...");
+            setTimeout(() => { window.location.href = "?"; }, 1500);
+        }).catch(e => showToast("❌ 刪除失敗：" + e.message)); 
+    }
+}
+
 function switchTab(tId) { ['game','signup','roster','admin'].forEach(id => { const s = document.getElementById('sec-'+id), t = document.getElementById('tab-'+id); if(s) s.classList.toggle('active', id===tId); if(t) t.classList.toggle('active', id===tId); }); }
-function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 function signInWithGoogle() { auth.signInWithPopup(provider); }
 function signOut() { auth.signOut().then(() => window.location.href = "?"); }
-function applyForHost() { if(confirm("申請團主？")) db.ref('hosts/' + currentUser.uid).set({status:'pending', name:currentUser.displayName, email:currentUser.email, time:Date.now()}); }
+function applyForHost() { if(confirm("申請團主？")) db.ref('hosts/' + currentUser.uid).set({status:'pending', name:currentUser.displayName, email:currentUser.email, time:Date.now()}).then(()=>showToast("✅ 申請已送出！")); }
 </script>
 </body>
 </html>
