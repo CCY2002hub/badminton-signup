@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Elite 羽球系統 - V38 Dual Pill Filters</title>
+<title>Elite 羽球系統 - V39 Time Display</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 /* ===== 核心視覺設定 (完全展開版) ===== */
@@ -197,7 +197,7 @@ label {
 .info-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; font-size: 15px; }
 .info-label { color: var(--neon-green); font-weight: bold; min-width: 80px; }
 
-/* 單純的星期分隔標題 (不再是手風琴) */
+/* 單純的星期分隔標題 */
 .weekday-divider { 
     color: var(--neon-green); 
     font-size: 16px; 
@@ -533,7 +533,7 @@ label {
       <label>補充備註</label>
       <textarea id="set-note" rows="5" placeholder="例如：可提早15分鐘進場熱身、需自備球拍、請穿平底鞋..."></textarea>
       
-      <button class="btn-primary" style="font-size:18px; padding:16px; margin-top:10px;" onclick="saveSettings()">💾 儲存並發佈球隊</button>
+      <button class="btn-primary" style="font-size:18px; padding:16px; margin-top:10px;" onclick="saveSettings()">💾 儲存並發佈球局</button>
       
       <div style="margin-top:50px; border-top:1px solid rgba(255,255,255,0.1); padding-top:30px;">
         <h3 style="color:var(--neon-red); font-size:16px; margin-bottom:20px;">🚫 黑名單管理 (被封鎖者將無法報名)</h3>
@@ -656,7 +656,7 @@ function checkHostStatus(uid) {
 }
 
 // ==========================================
-// 4. 大廳雙重過濾與載入邏輯
+// 4. 大廳過濾器與載入邏輯
 // ==========================================
 function setRegionFilter(region) {
     currentRegionFilter = region;
@@ -707,6 +707,7 @@ function loadLobby() {
       const regionDisplay = s.region || "北部"; 
       const birdieDisplay = s.birdieType || "未標示球種";
       
+      // 🌟 在大廳卡片顯示精準的時間範圍
       const card = `
         <div class="card" onclick="window.location.href='?id=${id}'" style="cursor:pointer; border-left:5px solid ${isDraft ? 'var(--neon-orange)' : 'var(--neon-green)'}; padding:20px; margin-bottom:15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -719,7 +720,7 @@ function loadLobby() {
           </div>
           <div style="font-size:12px; color:var(--text-dim); display:flex; gap:15px; flex-wrap:wrap;">
             <span>🏆 ${s.lvMin||1}-${s.lvMax||18} 級</span>
-            <span>🕒 ${s.date||""} ${s.timeStart||""}</span>
+            <span>🕒 ${s.date||""} ${s.timeStart||""}${s.timeEnd ? ' ~ ' + s.timeEnd : ''}</span>
             <span style="color:var(--neon-orange);">🏸 ${birdieDisplay}</span>
           </div>
         </div>`;
@@ -741,12 +742,10 @@ function loadLobby() {
 
     document.getElementById('my-games-list').innerHTML = myHtml || "<p style='color:gray; font-size:14px; padding:10px;'>您目前無參與管理的球隊</p>";
     
-    // 🌟 單純的標題分隔輸出
     let finalOther = "";
     Object.keys(classified).forEach(d => { 
         if(classified[d].length > 0) { 
-            finalOther += `<div class="weekday-divider">📅 ${d} <span style="font-size:13px; color:gray; font-weight:normal; margin-left:5px;">(${classified[d].length} 團)</span></div>`;
-            finalOther += classified[d].join('');
+            finalOther += `<div class="weekday-divider">${d}</div>` + classified[d].join(''); 
         } 
     });
     
