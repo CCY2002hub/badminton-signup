@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Elite 羽球系統 - V37 Detail Polished</title>
+<title>Elite 羽球系統 - V38 Dual Pill Filters</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 /* ===== 核心視覺設定 (完全展開版) ===== */
@@ -86,7 +86,8 @@ body::before {
     text-shadow: 0 0 10px rgba(100,255,218,0.5); 
 }
 
-.region-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+/* 🌟 雙排濾鏡按鈕 (一格格的感覺) */
+.region-tabs { display: flex; gap: 8px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px; }
 .region-tab { 
     padding: 8px 16px; 
     border-radius: 20px; 
@@ -196,25 +197,14 @@ label {
 .info-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; font-size: 15px; }
 .info-label { color: var(--neon-green); font-weight: bold; min-width: 80px; }
 
-/* 🌟 折疊抽屜 (Accordion) 設計 */
+/* 單純的星期分隔標題 (不再是手風琴) */
 .weekday-divider { 
     color: var(--neon-green); 
     font-size: 16px; 
     font-weight: bold; 
-    margin: 25px 0 10px; 
+    margin: 30px 0 15px; 
     border-left: 4px solid var(--neon-green); 
-    padding: 12px 15px; 
-    background: rgba(100, 255, 218, 0.05);
-    border-radius: 0 8px 8px 0;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: 0.2s;
-    user-select: none;
-}
-.weekday-divider:hover {
-    background: rgba(100, 255, 218, 0.15);
+    padding-left: 12px; 
 }
 
 /* 名單樣式 */
@@ -302,12 +292,22 @@ label {
       <h3 style="color:var(--text-dim); font-size:18px;">🏸 開放報名中</h3>
   </div>
   
-  <div class="region-tabs" id="lobby-region-tabs" style="margin-bottom: 25px;">
+  <div class="region-tabs" id="lobby-region-tabs">
       <div class="region-tab active" data-val="北部" onclick="setRegionFilter('北部')">北部</div>
       <div class="region-tab" data-val="中部" onclick="setRegionFilter('中部')">中部</div>
       <div class="region-tab" data-val="南部" onclick="setRegionFilter('南部')">南部</div>
       <div class="region-tab" data-val="東部" onclick="setRegionFilter('東部')">東部</div>
       <div class="region-tab" data-val="外島" onclick="setRegionFilter('外島')">外島</div>
+  </div>
+  <div class="region-tabs" id="lobby-day-tabs" style="margin-bottom: 25px;">
+      <div class="region-tab active" data-val="全部" onclick="setDayFilter('全部')">全部</div>
+      <div class="region-tab" data-val="每週一" onclick="setDayFilter('每週一')">週一</div>
+      <div class="region-tab" data-val="每週二" onclick="setDayFilter('每週二')">週二</div>
+      <div class="region-tab" data-val="每週三" onclick="setDayFilter('每週三')">週三</div>
+      <div class="region-tab" data-val="每週四" onclick="setDayFilter('每週四')">週四</div>
+      <div class="region-tab" data-val="每週五" onclick="setDayFilter('每週五')">週五</div>
+      <div class="region-tab" data-val="每週六" onclick="setDayFilter('每週六')">週六</div>
+      <div class="region-tab" data-val="每週日" onclick="setDayFilter('每週日')">週日</div>
   </div>
 
   <div id="other-games-container">載入中...</div>
@@ -336,7 +336,6 @@ label {
           📍 <span id="disp-venue">載入中...</span>
           <span id="disp-region-badge" class="badge tag-badge" style="margin-left:10px;">北部</span>
       </div>
-      
       <div id="disp-address" style="color:var(--neon-blue); text-decoration:underline; cursor:pointer; font-size:14px; margin-bottom:20px; margin-top:-10px;"></div>
       
       <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:25px;">
@@ -534,7 +533,7 @@ label {
       <label>補充備註</label>
       <textarea id="set-note" rows="5" placeholder="例如：可提早15分鐘進場熱身、需自備球拍、請穿平底鞋..."></textarea>
       
-      <button class="btn-primary" style="font-size:18px; padding:16px; margin-top:10px;" onclick="saveSettings()">💾 儲存並發佈球局</button>
+      <button class="btn-primary" style="font-size:18px; padding:16px; margin-top:10px;" onclick="saveSettings()">💾 儲存並發佈球隊</button>
       
       <div style="margin-top:50px; border-top:1px solid rgba(255,255,255,0.1); padding-top:30px;">
         <h3 style="color:var(--neon-red); font-size:16px; margin-bottom:20px;">🚫 黑名單管理 (被封鎖者將無法報名)</h3>
@@ -587,6 +586,7 @@ let selectedTags = [];
 
 // 雙重過濾器狀態
 let currentRegionFilter = '北部'; 
+let currentDayFilter = '全部';
 
 // ==========================================
 // 2. 介面初始化 (選單與標籤)
@@ -656,7 +656,7 @@ function checkHostStatus(uid) {
 }
 
 // ==========================================
-// 4. 大廳過濾器與載入邏輯 (折疊抽屜版)
+// 4. 大廳雙重過濾與載入邏輯
 // ==========================================
 function setRegionFilter(region) {
     currentRegionFilter = region;
@@ -667,17 +667,13 @@ function setRegionFilter(region) {
     loadLobby(); 
 }
 
-// 🌟 點擊標題展開/收起
-function toggleDay(d) {
-    const content = document.getElementById('content-' + d);
-    const icon = document.getElementById('icon-' + d);
-    if (content.style.display === 'none') {
-        content.style.display = 'block';
-        icon.innerHTML = '▲ 收起';
-    } else {
-        content.style.display = 'none';
-        icon.innerHTML = '▼ 展開';
+function setDayFilter(day) {
+    currentDayFilter = day;
+    const tabs = document.getElementById('lobby-day-tabs').children;
+    for(let i = 0; i < tabs.length; i++) {
+        tabs[i].classList.toggle('active', tabs[i].getAttribute('data-val') === day);
     }
+    loadLobby(); 
 }
 
 function loadLobby() {
@@ -732,10 +728,12 @@ function loadLobby() {
       if (s.ownerUid === currentUser.uid || currentUser.uid === SUPER_ADMIN) { 
           myHtml += card; 
       } 
-      // 別人的球隊：判斷區域
+      // 別人的球隊：判斷區域與星期
       else if (!isDraft) { 
           const regionMatch = regionDisplay.includes(currentRegionFilter);
-          if (regionMatch) {
+          const dayMatch = (currentDayFilter === '全部') || (s.date === currentDayFilter);
+          
+          if (regionMatch && dayMatch) {
               if(classified[s.date]) classified[s.date].push(card);
           }
       }
@@ -743,22 +741,19 @@ function loadLobby() {
 
     document.getElementById('my-games-list').innerHTML = myHtml || "<p style='color:gray; font-size:14px; padding:10px;'>您目前無參與管理的球隊</p>";
     
-    // 輸出折疊抽屜結構 (Accordion)
+    // 🌟 單純的標題分隔輸出
     let finalOther = "";
     Object.keys(classified).forEach(d => { 
         if(classified[d].length > 0) { 
-            finalOther += `
-            <div class="weekday-divider" onclick="toggleDay('${d}')">
-                <span>📅 ${d} <span style="font-size:13px; color:var(--text-dim); margin-left:8px;">(${classified[d].length} 團)</span></span>
-                <span id="icon-${d}" style="font-size:13px; color:var(--text-dim);">▼ 展開</span>
-            </div>
-            <div id="content-${d}" style="display:none; padding-left:5px; animation: fadeIn 0.3s;">
-                ${classified[d].join('')}
-            </div>`; 
+            finalOther += `<div class="weekday-divider">📅 ${d} <span style="font-size:13px; color:gray; font-weight:normal; margin-left:5px;">(${classified[d].length} 團)</span></div>`;
+            finalOther += classified[d].join('');
         } 
     });
     
-    document.getElementById('other-games-container').innerHTML = finalOther || `<p style='text-align:center; color:gray; padding:30px;'>目前【${currentRegionFilter}】無符合的球隊</p>`;
+    let filterText = currentRegionFilter;
+    if(currentDayFilter !== '全部') filterText += " 的 " + currentDayFilter;
+    
+    document.getElementById('other-games-container').innerHTML = finalOther || `<p style='text-align:center; color:gray; padding:30px;'>目前【${filterText}】無符合的球隊</p>`;
   });
 }
 
